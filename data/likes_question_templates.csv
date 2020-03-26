@@ -1,0 +1,21 @@
+question,answer_id,default_positive
+Do you <sentiment> <noun>?,1,0
+What kind of <topic> do you <sentiment>?,2,0
+What type of <topic> are you into?,2,1
+What type of <topic> do you <sentiment>?,2,0
+What is your favorite kind of <topic>?,3,1
+What is your favorite <topic>?,3,1
+What's your favorite <topic> genre?,4,1
+what is your favorite type of <topic>?,3,1
+What is your favorite kind of <topic>?,3,1
+What do you think about <noun>?,5,0
+What sort of <topic> do you <sentiment>?,2,0
+What <topic> do you <sentiment>?,2,0
+What <topic> are you into right now?,2,1
+What are your favorite <topic>?,6,1
+What are some of your favorite <topic>?,6,1
+Do you have any interest in <topic>?,2,1
+Do you have a favorite <topic>?,3,1
+Do you <sentiment> <noun> at all?,1,0
+Do you have any favorite <topic>?,3,1
+do you <sentiment> any type of <topic>?,2,0

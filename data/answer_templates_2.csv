@@ -1,0 +1,160 @@
+answer,answer_id,optional_id,topic,use_wild
+I like to go running/hiking.,1,2,,0
+I like to play tennis during the day but I also like to go running.,1,2,,0
+I usually go to the beach.,1,0,,0
+I like to play tennis and go rock climbing.,1,2,,0
+"I like to go out to bars on the weekends, but if I'm stressed out then I'll usually head out to eat.",1,0,,0
+I like to go to the movies.,1,2,,0
+"I like to go out to bars on the weekends, but if I'm too tired I usually stay in and watch movies.",1,0,,0
+"I like to swim, play video games, play Magic: The Gathering, watch Netflix, go to bars, have parties, cook, workout and eat lots of food",1,2,,0
+"I like to bowl, watch movies and go out with my friends.",1,2,,0
+I like to watch a football game or two during the day and watch movies during the evening.,1,0,,0
+"I like to play video games, listen to music, bake, and watch movies.",1,2,,0
+I like to play video games and watch movies.,1,2,,0
+I like to play tennis and go rock climbing.,1,2,,0
+I like to play basketball or golf or just walk around.,1,2,,0
+I usually go to bars and eat out.,1,0,,0
+"I like to play video games, cook, and party (though I haven't been regularly).",1,2,,0
+I like to play basketball or just walk around <location>,2,0,,0
+I like to go out in nature photographing whales,2,0,,0
+"I like to bowl, watch movies and go out with my friends.",2,0,,0
+I like to play video games in my spare time.,2,0,,0
+I like to play pool with friends or just play tennis.,2,0,,0
+I enjoy going out to eat or taking walks along the river.,2,0,,0
+I like to party (and bike) with friends.,2,0,,0
+I like getting together with friends.,2,0,,0
+"I love to hike with my family, go hiking with my cousin, go biking by the river, and just generally be nice.",2,0,,0
+I love to watch movies and reading online.,2,0,,0
+I like to play sports.,2,0,,0
+I like to play tennis and do cross country skiing.,2,0,,0
+I like to play soccer and listen to music.,2,0,,0
+"I like to play basketball when I have time, read books or just relax.",2,0,,0
+"I basically spend time with my family and friends, my hobbies include biking and reading.",2,0,,0
+I watch a lot of movies.,2,0,,0
+"I like to watch movies, travel, go surfing, play video games.",2,0,,0
+"I like to watch movies, go surfing, play video games, listen to music, cook, and workout.",2,0,,0
+I like to watch movies and do a little cooking.,2,0,,0
+"I like to gamble, exercise, and travel!",2,0,,0
+"I basically spend time with my family, read, and listen to music.",2,0,,0
+"I like to watch movies, go out with my friends, have parties, cook, and...I also like to travel!",2,0,,0
+"I like to watch movies, go to festivals, go places with friends, play sports.",2,0,,0
+"I like to watch movies, go surfing, play video games, go to bars, listen to music, cook, workout, and do a few other things.",2,0,,0
+"I like to watch a bunch of movies, go to bars occasionally, and travel.",2,0,,0
+I like watching documentaries about great places and I like playing online especially on the PS4.,2,0,,0
+I love to watch movies and I cook.,2,3,,0
+"I enjoy traveling, visiting family, eating food, having parties, and generally being kind to others.",2,0,,0
+"Not much, just watching movies.",2,0,,0
+"I like to gamble, exercise, and go out to bars sometimes.",2,0,,0
+I... I like to watch movies.,2,0,,0
+I like to play baseball and listen to music.,2,3,,0
+I'm usually out in nature photographing something.,2,3,,0
+I like to hike and I like to ski as well.,2,0,,0
+"Well, I do a lot of yoga.",2,0,,0
+"Mostly cooking, drinking beer and spending time with family.",2,0,,0
+I love to hike and I also love yoga.,2,3,,0
+"I like to ride my bicycle, go to festivals, and do other type of active things.",2,0,,0
+"I enjoy reading, hiking, and going to the beach.",2,0,,0
+I'm a runner so I like to run along the river or along the embankment.,2,0,,0
+Being out in nature with friends.,2,0,,0
+"Mostly outdoorsy stuff, I like to hike and camp, that sort of stuff.",2,0,,0
+I like to play sports.,3,2,,0
+"I like to ski, I like swimming, and I like playing video games too.",3,2,,0
+"I like to ski, I like swimming and getting out in the open is super fun!",3,2,,0
+"I like biking, playing basketball, and reading.",3,2,,0
+I like to hike and I also like to ski.,4,2,,0
+I like to hike and I also like to play tennis.,4,2,,0
+I like to play the violin and sing.,2,0,,0
+I like playing solitaire.,2,0,,0
+"I enjoy cooking, playing basketball, and hanging out with friends.",2,0,,0
+"My favorite things are watching movies, walking, fishing, playing video games.",2,3,,0
+My hobbies include biking and reading.,3,2,,0
+My favorite activities are watching Netflix and walking around <location>.,2,0,,0
+"I have plenty of hobbies, but my main activities are playing video games and walking (I also enjoy cooking, reading, and gardening).",3,2,,0
+I have to admit that I do a lot of walking and biking.,2,0,,0
+I do a lot of walking and running.,2,0,,0
+"I like to cook, if you can call that a hobby and I like all types of craftwork",3,2,,0
+"I like to ski, I like playing video games, reading, and traveling.",3,2,,0
+"I like to bake, do a few different things, and I like to dance (even if I'm not able to do it due to a medical issue).",3,2,,0
+"Well I like to cook, if you can call that a hobby and I like to read alot.",3,0,,0
+I like to ski and I play all types of sports.,3,2,,0
+I like to play tennis and I like to dance too.,3,2,,0
+"My concentration is music, but I enjoy playing video games.",2,0,,0
+I'm into astrophysics.,2,0,,0
+I like music.,2,0,,0
+"My concentration is music, but I also like cooking, movies, reading, walking, spending time with my family, etc.",2,0,,0
+"Music, hiking, drinking beer.",2,0,,0
+My main activity is watching movies on netflix.,2,0,,0
+"Concerts, hikes, shopping, hiking, and the like. I also like swimming.",2,0,,0
+I'm a musician.,3,0,,0
+I love to read.,3,2,,0
+I'm an avid reader and writer.,3,2,,0
+My favorite activities are golf and biking.,3,2,,0
+"I'm a gamer, so I play all kinds of games.",3,2,,0
+I play baseball so that's my number one thing.,3,2,,0
+"I have never been much of a jogger, but I do like to go out in nature occasionally.",4,0,,0
+I rather like running or hiking.,4,0,,0
+I hike and I like to bike too.,4,0,,0
+I would argue I enjoy nature more than most people.,4,0,,0
+"I have been involved in several types of outdoor activities over the years, most notably, I bike!",4,0,,0
+"I like to hike and I like to ski, but I don't ski as often as I'd like.",4,0,,0
+I ski and I go kayaking.,4,0,,0
+"I like a lot of genres, although I have been really into contemporary classical.",5,0,,0
+"I like all types of music, even classical music.",5,0,,0
+"I like a lot of genres, but I have been really into Cambodian and Korean rock.",5,0,,0
+"I like all types of music, mainly country, hip hop, and r&b.",5,0,,0
+"I like a lot of genres, but I really enjoy Led Zeppelin.",5,0,,0
+I like everything.,5,0,,0
+"I play an acoustic guitar, but I enjoy playing drums too.",6,0,,0
+I enjoy playing drums and playing guitar.,6,0,,0
+I really enjoy playing the harp but I don't have a lot of time now.,6,0,,0
+Piano and guitar when I was 8.,7,0,,0
+Concert violin.,7,0,,0
+A guitar.,7,0,,0
+I really enjoy playing drums in concerts.,8,0,,0
+I used to be pretty deep into guitar.,8,0,,0
+I used to be a drummer in a jazz band.,8,0,,0
+I play a flute.,6,0,,0
+I play several instruments but my main musical skill is in vocals.,6,0,,0
+I'm a saxophonist.,6,0,,0
+I'm into fingerstyle guitar right now.,6,8,,0
+I'm playing the harp.,6,0,,0
+I feel the need to say piano.,8,0,,0
+I am a sci-fi/fantasy fan.,9,0,,0
+I'm into short stories or non-fiction.,9,0,,0
+I'm into history.,9,0,,0
+I'm into either history or culture.,9,0,,0
+I'm into Greek Mythology.,9,0,,0
+I'm into clean fiction.,9,0,,0
+I like to read non-fiction.,9,0,,0
+I'm into the non-fiction realm.,9,0,,0
+I'm into nature and fantasy.,9,0,,0
+I like to read Fantasy & Science fiction.,9,0,,0
+I like to read Modern Age literature.,9,0,,0
+"I am currently reading ""Quiet"" by Susan Cain
+",10,0,,0
+I'm a fan of sci-fi and fantasy.,11,9,,0
+"Yes, currently my favorite is by Stephen King.",12,0,,0
+"Yes, I do currently have a favorite book which is ""1984"".",12,0,,0
+"Yes, currently my favorite is ""Farewell, Socrates.""",12,0,,0
+Stephen King.,13,0,,0
+"Yes, I do! I'm a big fan of Dostoevsky!",13,0,,0
+"Yes, I do! I'm a big fan of Jane Austen.",13,0,,0
+"Yes, a lot of them! I read a lot of Stephen King, Ian Rankin, and Susan B. Anthony.",13,0,,0
+I do like <wild> movies.,14,0,,1
+"Yeah, I watch almost anything from start to finish.",14,0,,0
+I watch a lot of <wild> movies,14,0,,1
+"Yeah, I love <wild> movies",14,0,,1
+I probably watch like 10 movies a week.,15,,,
+I probably watch quite a bit.,15,,,
+"I probably watch a lot of movies, but not as many as I would like.",15,,,
+"yes, currently Beauty and the Beast, Star Wars: The Last Jedi, Wonder Woman, Captain America: Civil War.",16,,,
+Not recently.,16,,,
+I love watching movies.,17,,,
+I love watching movies but I don't have a lot of free time as of late.,17,,,
+"I love watching movies since I was little, but I haven't been able to get enough of Disney lately.",17,,,
+"I love watching movies, mainly survival horror, but also some sci-fi as well.",17,,,
+I saw The Social Network and Indiana Jones and the Last Crusade.,18,,,
+"Not recently, all of the movies today have looked pretty boring.",18,,,
+I saw the Martian and Avatar.,18,,,
+"Yup, I saw the Avengers on Blu-ray yesterday.",18,,,
+"Yeah, I've been watching Lord of the Rings lately.",18,,,

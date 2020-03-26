@@ -1,0 +1,67 @@
+question,answer_id,has_wild
+what do you like to do for fun during the weekend?,1,0
+What do you like to do for fun around here?,2,0
+what do you enjoy doing for fun?,2,0
+What do you like to do for fun?,2,0
+What do you do for fun?,2,0
+What do you do for fun in your sparetime?,2,0
+What do you do for fun around here?,2,0
+What do you do in your spare time?,2,0
+What do you like to do in your free time?,2,0
+What do you enjoy doing in your free time?,2,0
+What do you do in your spare time?,2,0
+What kinds of things do you enjoy?,2,0
+what kinds of things do you enjoy doing?,2,0
+what kinds of things do you like to do on the weekends?,1,0
+What kind of things do you enjoy doing in your free time?,2,0
+What kind of hobbies do you have?,3,0
+What kind of hobbies do you like to do?,3,0
+What kind of hobbies do you enjoy?,3,0
+What kind of hobbies / activities are you involved in?,3,0
+what kind of outdoors stuff do you do?,4,0
+what kind of fun stuf do you do outside of work?,2,0
+What sort of things do you do in your free time?,2,0
+what things do you enjoy doing?,2,0
+What are your hobbies?,3,0
+What are some of your hobbies?,3,0
+What are your interests?,3,0
+what are some of your interests?,3,0
+What interests do you have?,3,0
+What is one of your hobbies?,3,0
+What activities are you interested in?,3,0
+Any major hobbies?,3,0
+Any favorite hobbies?,3,0
+Do you have any hobbies?,3,0
+Do you enjoy outdoor activities?,4,0
+Do you do any outdoor activities?,4,0
+What kind of music do you like to listen to?,5,0
+Do you play an instrument?,6,0
+Have you ever played an instrument?,6,0
+what instrument do you play?,6,0
+favorite instrument?,8,0
+What was your first instrument?,7,0
+Are you drawn to any particular instrument?,8,0
+What kind of books do you like to read?,9,0
+What genre of books do you like to read?,9,0
+What books do you enjoy?,9,0
+Are you reading any good books right now?,10,0
+What genre of books do you enjoy reading?,9,0
+Any favorite genres of television or books?,11,0
+Do you have a favorite book?,12,0
+Do you have a favorite book author?,13,0
+Do you like <wild> movies?,14,1
+how many movies a week do you watch?,15,0
+been to any movies recently?,16,0
+do you like to watch movies?,17,0
+Have you seen any good movies?,18,0
+See any good movies lately?,18,0
+What are your movie/TV interests?,,0
+what is the most recent movie you have seen?,18,0
+Do you have a favorite movie?,,0
+What are some of your favorite shows on netflix?,,0
+Watch any TV shows?,,0
+Have you seen any good shows lately?,,0
+What kinds of shows do you enjoy watching?,,0
+What shows do you enjoy on Netflix?,,0
+Do you like to watch <wild>?,,1
+What is your favorite <wild> show?,,1
