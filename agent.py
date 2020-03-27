@@ -211,6 +211,7 @@ def process_user_input(user_input):
             
         if is_noun_existing_subject(n[0]):
             noun = n[0]
+            noun_topics = [like_memory.loc[like_memory['subject'] == noun].topic.iloc[0]]
             break
     #If the noun is not a recognized topic or subject...      
     if noun == None:

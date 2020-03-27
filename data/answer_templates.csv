@@ -1,7 +1,7 @@
 answer,answer_id,same_sentiment,fetch_count,default_negative,default_positive,use_noun,use_sentiment
 "Yes, I <sentiment> <noun>.",1,1,0,0,0,1,1
 "No, I don't <sentiment> <noun>.",1,0,0,0,0,1,1
-"No, I <sentiment_1> <noun>.",1,0,0,0,0,0,0
+"No, I <sentiment_1> <noun>.",1,0,0,0,0,1,0
 I <sentiment_1> <noun>.,1,0,0,0,0,1,0
 I do <sentiment> <noun>. I also <sentiment> <noun_1>.,1,1,1,0,0,1,1
 "Yes, I do!",1,1,0,0,0,0,0
