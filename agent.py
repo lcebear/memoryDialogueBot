@@ -5,6 +5,7 @@ from nltk.tokenize import word_tokenize
 import numpy as np
 import requests
 import nltk
+from pattern.en import pluralize, singularize
 
 import gpt_2_simple as gpt2
 
@@ -25,7 +26,7 @@ like_memory = like_memory.drop_duplicates(subset='subject', keep="last")
 #Assign random sentiment to every noun item in memory
 temp = np.random.random(len(like_memory))
 like_memory['sentiment'] = temp
-
+like_memory['lc_subject'] = np.nan
 
 
 #def calculate_topic_sent(): 
@@ -68,6 +69,14 @@ for topic in memory_topics:
   
 #print(topic_dislike)
 
+#
+subj =""
+for i in range(len(like_memory)):
+    subj = like_memory.subject.iloc[i]
+    like_memory.lc_subject.iloc[i] = subj.lower()
+#print(like_memory.head()) 
+#print(topic_dislike)
+
 #Default values
 sentiment_opt_pos = ["like", "likes", "love", "loves"]
 sentiment_opt_neg = ["dislikes", "dislike", "hate", "hates"]
@@ -88,7 +97,7 @@ def fetch_subject_sentiment(key):
     key = key.lower()
     ans_sent = None
 
-    temp_l = like_memory.loc[like_memory['subject'] == key]
+    temp_l = like_memory.loc[like_memory['lc_subject'] == key]
 
     if len(temp_l) > 0:
         ans_sent = temp_l.sentiment.iloc[0]
@@ -136,7 +145,7 @@ def check_noun_topic_exist_memory(noun):
     
 #Check if noun is a known subject in memory
 def is_noun_existing_subject(noun):
-    temp_l = like_memory.loc[like_memory['subject'] == noun]
+    temp_l = like_memory.loc[like_memory['lc_subject'] == noun.lower()]
     if len(temp_l) > 0:
         return True
     else:
@@ -180,6 +189,7 @@ def similarity_calc(X,Y):
 
 #process the user input 
 def process_user_input(user_input):
+    user_input = user_input.lower()
     extracted_nouns = []
     form_input = user_input
     global question_sentiment
@@ -187,7 +197,7 @@ def process_user_input(user_input):
     global like_memory
     noun = None
     orig_noun = None
-    previous_n = None
+    prev_token = None
     sentiment_exist = False
     noun_topics = []
     text = nlp(user_input)
@@ -199,11 +209,20 @@ def process_user_input(user_input):
             
         tag = nltk.pos_tag([token.text])
         if token.pos_ == "NOUN" or tag[0][1] == "NN" or tag[0][1] == 'NNS':
-            extracted_nouns.append((token.text, None))
+            if prev_token != None:
+                temp_str = prev_token + " " + token.text
+                #print("RAN THE IF", temp_str)
+                extracted_nouns.insert(0, (temp_str, temp_str))
+            
+            extracted_nouns.append((token.text, token.text))
             extracted_nouns.append((token.lemma_, token.text))
+            extracted_nouns.append((pluralize(token.text), token.text))
+            #TODO: take into consideration singular/plural, video game vs video games
+        prev_token = token.text if token.pos_ == "NOUN" else None
+        #print(token.text, token.pos_)
     for n in extracted_nouns:
-        orig_noun = n[0] if n[1] == None else n[1]
-         
+        orig_noun = n[1]
+        
         if is_noun_existing_topic(n[0]):
             noun_topics = [n[0]]
             noun = n[0]
@@ -211,7 +230,7 @@ def process_user_input(user_input):
             
         if is_noun_existing_subject(n[0]):
             noun = n[0]
-            noun_topics = [like_memory.loc[like_memory['subject'] == noun].topic.iloc[0]]
+            noun_topics = [like_memory.loc[like_memory['lc_subject'] == noun].topic.iloc[0]]
             break
     #If the noun is not a recognized topic or subject...      
     if noun == None:
@@ -226,20 +245,20 @@ def process_user_input(user_input):
                 noun_sent = np.random.random(1)
                 for topic in noun_topics:
                     like_memory = like_memory.append(
-                        {'subject' : noun , 'topic' : topic, 'sentiment' : noun_sent} ,
+                        {'subject' : noun , 'topic' : topic, 'sentiment' : noun_sent, 'lc_subject' : noun.lower()} ,
                         ignore_index=True)
                 break
     
     if noun != None:
         if is_noun_existing_topic(noun):
             noun_topics = [noun]
-            form_input = form_input.replace(noun, wildcards["topic"])
+            form_input = form_input.replace(orig_noun, wildcards["topic"])
         else:
-            form_input = form_input.replace(noun, wildcards["noun"])
+            form_input = form_input.replace(orig_noun, wildcards["noun"])
     if sentiment_exist:
         form_input = form_input.replace(question_sentiment, wildcards['sentiment'])
 
-    #print(user_input, form_input, noun)
+    #print(user_input, form_input, noun, orig_noun, noun_topics)
     return form_input, noun, orig_noun, noun_topics 
     
 def find_question_n_answer_retrieval(user_input):
@@ -365,10 +384,15 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
             temp_nouns = topic_favorites[noun_topics[0]]
         elif question_sentiment in sentiment_opt_neg:
             temp_nouns = topic_dislike[noun_topics[0]]
+        sing_noun = singularize(noun)
+        plural_noun = pluralize(noun)
+        if sing_noun in temp_nouns: temp_nouns.remove(sing_noun)
+        elif plural_noun in temp_nouns: temp_nouns.remove(plural_noun)
             
     #replace nouns
     for i in range(1,answer_template.fetch_count+1):
         temp = "noun_"+str(i)
+        
         agent_output = agent_output.replace(wildcards[temp], temp_nouns[i-1])
     
     if answer_template.use_noun:
@@ -380,6 +404,7 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
     return agent_output
     
 def generate_reply(user_question, num_answers=1):
+    print("In generate_reply", user_question)
     text_input = "<|startoftext|>" + user_question
     gen_ans =gpt2.generate(sess,
                   run_name=run_name,
@@ -393,4 +418,5 @@ def generate_reply(user_question, num_answers=1):
                   top_p=0.9,
                   return_as_list=True
                   )
+    #print(gen_ans)
     return gen_ans

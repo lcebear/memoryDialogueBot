@@ -1,0 +1,49 @@
+  <!DOCTYPE html>
+<html>
+ <head>
+  <title>DialogueBot</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <center>
+      <h1>
+        Your Personal ChatBot
+      </h1>
+    </center>
+      <div>
+       <p>
+          <center><span>Hi! I'm your personal ChatBot</span></center>
+          </p>
+       </div>
+	   <div id="chatbox">
+	   </div>
+       <div id="userInput">
+          <input id="textInput" type="text" name="msg" placeholder="Message" />
+		  <script>
+			function getBotResponse() {
+			  var rawText = $("#textInput").val();
+			  var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
+			  $("#textInput").val("");
+			  $("#chatbox").append(userHtml);
+			  document
+				.getElementById("userInput")
+				.scrollIntoView({ block: "start", behavior: "smooth" });
+			  $.get("/get", { msg: rawText }).done(function(data) {
+				var botHtml = '<p class="botText"><span>' + data + "</span></p>";
+				$("#chatbox").append(botHtml);
+				document
+				  .getElementById("userInput")
+				  .scrollIntoView({ block: "start", behavior: "smooth" });
+			  });
+			}
+			$("#textInput").keypress(function(e) {
+			  if (e.which == 13) {
+				getBotResponse();
+			  }
+			});
+			</script>
+       
+	   </div>
+	   
+  </body>
+</html>
