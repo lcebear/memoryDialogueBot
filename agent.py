@@ -2,12 +2,20 @@ import pandas as pd
 import spacy
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
+from nltk.tokenize import sent_tokenize
 import numpy as np
 import requests
 import nltk
 from pattern.en import pluralize, singularize
 
 import gpt_2_simple as gpt2
+import atexit
+
+def exit_handler():
+    print('My application is ending! Saving data')
+    generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
+
+atexit.register(exit_handler)
 
 
 nlp = spacy.load('en_core_web_sm')
@@ -19,6 +27,7 @@ retrieval_q = pd.read_csv('data/questions_templates.csv')
 template_a = pd.read_csv('data/answer_templates.csv')
 retrieval_a = pd.read_csv('data/answer_templates_2.csv')
 like_memory = pd.read_csv('data/sentiment_memory.csv')
+generated_kb = pd.read_csv('data/generated_answers_kb.csv')
 
 
 #Some fruits are listed under "Food" topic, so the line below is temporary remove solution
@@ -418,5 +427,31 @@ def generate_reply(user_question, num_answers=1):
                   top_p=0.9,
                   return_as_list=True
                   )
-    #print(gen_ans)
+    print(gen_ans[0])
+    
     return gen_ans
+
+def preprocess_reply(input_text):
+    replaced = input_text.replace('<|startoftext|>', '')
+    replaced = replaced.replace('<|endoftext|>', '')
+    replaced = replaced.replace('?', '?\n')
+    text_sentences = nlp(replaced)
+    temp_saved =""
+    for sentence in text_sentences.sents:
+        #print(sentence.text, len(sentence))
+        if len(sentence)>1:
+            temp_saved = temp_saved + " " + sentence.text
+            for token in sentence:
+                #print(token.text, token.pos_)
+                if token.text =="?":
+                    temp_saved=""
+    text_sentences = sent_tokenize(temp_saved)
+    final =""
+    count = 0
+    for sent in text_sentences:
+        count +=1
+        if count >2:
+            break
+        final = final + " " + sent
+    return final.strip()
+    

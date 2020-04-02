@@ -1,0 +1,96 @@
+  <!DOCTYPE html>
+<html>
+ <head>
+  <title>MemoryDialogueBot</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../static/styles.css"><!--    "../static/styles.css"-->
+  </head>
+  <body>
+    <center>
+      <h1>
+        MemoryDialogueBot
+      </h1>
+    </center>
+	<center>
+<form action="/end" method="post">
+<p>Age
+<input required type="number"></input>
+</p>
+	<div id="tableDiv">
+	<p>
+
+	<table id="surveyTable" border="">
+
+	<tbody><tr align="CENTER">
+	<td width="75"> </td>
+	<td width="75"><b>Strongly<br>disagree</b></td>
+	<td width="75"><b>Disagree</b></td>
+	<td width="75"><b>Neither<br>agree<br>nor<br>disagree</b></td>
+	<td width="75"><b>Agree</b></td>
+	<td width="75"><b>Strongly<br>agree</b></td>
+	</tr>
+
+	<tr align="CENTER">
+	<td align="LEFT">
+	  It feels as if i’m chatting/talking with a real person</td>
+	<td><input type="RADIO" required name="realness" value="1"></td>
+	<td><input type="RADIO" required name="realness" value="2"></td>
+	<td><input type="RADIO" required name="realness" value="3"></td>
+	<td><input type="RADIO" required name="realness" value="4"></td>
+	<td><input type="RADIO" required name="realness" value="5"></td>
+	</tr>
+
+	<tr align="CENTER">
+	<td align="LEFT">
+	  The time it takes to get a response is acceptable.</td>
+	<td><input type="RADIO" required name="responsiveness" value="1"></td>
+	<td><input type="RADIO" required name="responsiveness" value="2"></td>
+	<td><input type="RADIO" required name="responsiveness" value="3"></td>
+	<td><input type="RADIO" required name="responsiveness" value="4"></td>
+	<td><input type="RADIO" required name="responsiveness" value="5"></td>
+	</tr>
+
+	<tr align="CENTER">
+	<td align="LEFT">
+	   The chatbot often gave contradicting answers.</td>
+	<td><input type="RADIO" required name="consistency" value="1"></td>
+	<td><input type="RADIO" required name="consistency" value="2"></td>
+	<td><input type="RADIO" required name="consistency" value="3"></td>
+	<td><input type="RADIO" required name="consistency" value="4"></td>
+	<td><input type="RADIO" required name="consistency" value="5"></td>
+	</tr>
+
+	<tr align="CENTER">
+	<td align="LEFT">
+	   The chatbot is engaging/interesting to interact with.</td>
+	<td><input type="RADIO" required name="engagingness" value="1"></td>
+	<td><input type="RADIO" required name="engagingness" value="2"></td>
+	<td><input type="RADIO" required name="engagingness" value="3"></td>
+	<td><input type="RADIO" required name="engagingness" value="4"></td>
+	<td><input type="RADIO" required name="engagingness" value="5"></td>
+	</tr>
+
+	<tr align="CENTER">
+	<td align="LEFT">
+	   I would like to interact with the chatbot again in the future.</td>
+	<td><input type="RADIO" required name="retention" value="1"></td>
+	<td><input type="RADIO" required name="retention" value="2"></td>
+	<td><input type="RADIO" required name="retention" value="3"></td>
+	<td><input type="RADIO" required name="retention" value="4"></td>
+	<td><input type="RADIO" required name="retention" value="5"></td>
+	</tr>
+	</table>
+	</p>
+	</div> <!---
+	<p>(Optional) Any  </p>
+	<p>
+<textarea name="comment" rows="4" cols="50"></textarea>
+</p> -->
+<p>
+<input type="submit"></input>
+</p>
+</form>
+</center>
+
+</body>
+</html>

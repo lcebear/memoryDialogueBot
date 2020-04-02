@@ -1,0 +1,69 @@
+  <!DOCTYPE html>
+<html>
+ <head>
+  <title>MemoryDialogueBot</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"><!--    "../static/styles.css"-->
+  </head>
+  <body>
+    <center>
+      <h1>
+        MemoryDialogueBot
+      </h1>
+    </center>
+	
+	   <div id="chatbox">
+		
+	   </div>
+	
+       <div id="userInput">
+			
+          <input id="textInput" type="text" name="msg" placeholder="Ask me a question!" />
+		  <script>
+			function getBotResponse() {
+			  var rawText = $("#textInput").val();
+			  var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
+			  $("#textInput").val("");
+			  $("#chatbox").append(userHtml);
+			  document
+				.getElementById("userInput")
+				.scrollIntoView({ block: "start", behavior: "smooth" });
+				
+			  var temp_div = '<div id="thinking"></div>';
+			  $("#chatbox").append(temp_div);
+			  
+			  $.get("/get_gen", { msg: rawText }).done(function(data) {
+				var botHtml = '<p class="botText"><span>' + data + "</span></p>";
+				$("#chatbox").append(botHtml);
+				document
+				  .getElementById("userInput")
+				  .scrollIntoView({ block: "start", behavior: "smooth" });
+			  $('#thinking').remove();
+			  });
+			}
+			$("#textInput").keypress(function(e) {
+			  if (e.which == 13) {
+				getBotResponse();
+				/* */
+			  }
+			});
+			
+
+			/*
+			var dots = window.setInterval( function() {
+				var wait = document.getElementById("thinking");
+				if ( wait.innerHTML.length > 3 ) 
+					wait.innerHTML = ".";
+				else 
+					wait.innerHTML += ".";
+				}, 400); */
+			</script>
+		<form action="/survey" method="post">
+		
+		<p><input type="checkbox" required name="terms"> <u>I'm done interacting with the chatbot.</u></p>
+       <input type ="submit" value="Continue to survey">
+	   </form>
+	   </div>
+	   
+  </body>
+</html>

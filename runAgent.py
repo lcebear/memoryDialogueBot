@@ -13,17 +13,13 @@ def get_reply(input_sentence):
         print(sim_val_2, max_sim_val)
         print(input_sentence)
         if (sim_val_2 < similarity_threshhold) and (max_sim_val < similarity_threshhold):
-            ans = agent.generate_reply(input_sentence)
-            print(ans[0], "GN")
-            answer = ans[0]
+            answer = generated_reply_helper(input_sentence)
         else:
             if sim_val_2 > max_sim_val:
                 if answer != None:
                     print(answer)
                 else:
-                    ans = agent.generate_reply(input_sentence)
-                    print(ans[0], "GN")
-                    answer = ans[0]
+                    answer = generated_reply_helper(input_sentence)
             #print(answer_id)
             elif user_noun != None:
                 #print(user_noun, orig_noun)
@@ -34,12 +30,20 @@ def get_reply(input_sentence):
                                                  user_noun, nouns,noun_topics, answer_sentiment)
             #The likes/dislikes template cannot handle the user input, introduce generative model.    
             else:
-                ans = agent.generate_reply(input_sentence)
-                #print('\n',input_sentence)#, question_sentiment)
-                print(ans[0], "GN")
-                answer = ans[0]
+                answer = generated_reply_helper(input_sentence)
         print(answer)
         return answer
     except KeyError:
         print("Error: Encountered unknown word.")
         return("Error getting reply")
+
+def generated_reply_helper(input_sentence):
+    output_sentence = agent.generate_reply(input_sentence)
+    ans = agent.preprocess_reply(output_sentence[0])
+    
+    agent.generated_kb = agent.generated_kb.append({'question' : input_sentence, 'answer' : output_sentence[0], "processed_answer" : ans } , ignore_index=True)
+    #agent.generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
+    print(agent.generated_kb.answer)
+    print(ans, "GN")
+    return ans
+    
