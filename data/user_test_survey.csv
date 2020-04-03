@@ -1,0 +1,11 @@
+survey,time,userID
+{},2020-04-03 14:30:15.088237,0.0
+"{'age': '12', 'realness': '1', 'responsiveness': '2', 'consistency': '1', 'engagingness': '1', 'retention': '2'}",2020-04-03 14:31:55,2.0
+"{'age': '11', 'realness': '5', 'responsiveness': '5', 'consistency': '5', 'engagingness': '5', 'retention': '5'}",2020-04-03 14:40:19,2.0
+"{'age': '111', 'realness': '3', 'responsiveness': '3', 'consistency': '3', 'engagingness': '4', 'retention': '2'}",2020-04-03 14:57:53,2.0
+"{'age': '13', 'realness': '1', 'responsiveness': '2', 'consistency': '1', 'engagingness': '2', 'retention': '5'}",2020-04-03 15:07:34,2.0
+"{'age': '1111', 'realness': '1', 'responsiveness': '3', 'consistency': '2', 'engagingness': '3', 'retention': '3'}",2020-04-03 15:17:38,2.0
+"{'age': '10', 'realness': '1', 'responsiveness': '1', 'consistency': '1', 'engagingness': '2', 'retention': '1'}",2020-04-03 15:31:50,5.0
+"{'age': '99', 'realness': '2', 'responsiveness': '2', 'consistency': '2', 'engagingness': '2', 'retention': '2'}",2020-04-03 15:32:38,4.0
+"{'age': '1337', 'realness': '1', 'responsiveness': '1', 'consistency': '1', 'engagingness': '1', 'retention': '1'}",2020-04-03 15:33:45,4.0
+"{'age': '10', 'realness': '5', 'responsiveness': '5', 'consistency': '5', 'engagingness': '5', 'retention': '5'}",2020-04-03 15:34:06,3.0

@@ -30,6 +30,7 @@
 				.scrollIntoView({ block: "start", behavior: "smooth" });
 				
 			  var temp_div = '<div id="thinking"></div>';
+			  /*document.getElementById("textInput").disabled = true; */
 			  $("#chatbox").append(temp_div);
 			  
 			  $.get("/get_gen", { msg: rawText }).done(function(data) {
@@ -39,6 +40,7 @@
 				  .getElementById("userInput")
 				  .scrollIntoView({ block: "start", behavior: "smooth" });
 			  $('#thinking').remove();
+			  /*document.getElementById("textInput").disabled = false;*/
 			  });
 			}
 			$("#textInput").keypress(function(e) {
