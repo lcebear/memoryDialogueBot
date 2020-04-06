@@ -437,14 +437,21 @@ def preprocess_reply(input_text):
     replaced = replaced.replace('?', '?\n')
     text_sentences = nlp(replaced)
     temp_saved =""
+    has_answer = False
     for sentence in text_sentences.sents:
+        if has_answer:
+            break
         #print(sentence.text, len(sentence))
         if len(sentence)>1:
             temp_saved = temp_saved + " " + sentence.text
             for token in sentence:
                 #print(token.text, token.pos_)
                 if token.text =="?":
-                    temp_saved=""
+                    if len(temp_saved) > 1:
+                        has_answer = True
+                        break
+                    else:
+                        temp_saved=""
     text_sentences = sent_tokenize(temp_saved)
     final =""
     count = 0

@@ -1,6 +1,10 @@
 from flask import Flask, request, render_template, session, g, redirect
 import runAgent as ra
 import pandas as pd
+from timeit import default_timer as timer
+import time
+
+
 app = Flask(__name__) #An instance of class Flask will be our WSGI application.
 app.secret_key = b'\xd5\xedF\xc5\x0f]\x08EF\x06\x0b\xc9l\xd5\x94\x95'
 global idvar 
@@ -30,6 +34,7 @@ def about():
         print("set ID")
     
     
+    session['delay'] = True if(session.get('userID') % 2) else False
     #g.value = idvar
     
     return render_template('about.html')
@@ -60,6 +65,8 @@ def my_form():
 #called in <script> in my-form.html    
 @app.route("/get_gen")
 def get_bot_response():
+    start_t = timer()
+    
     global message_history
     temp_l = message_history[session['userID']]
     
@@ -69,6 +76,23 @@ def get_bot_response():
     temp_l.append((userText,reply))
     message_history[session['userID']] = temp_l
     #print(message_history[session['userID']])
+    
+    #artificial dynamic delay
+    if session.get('delay') == True:    
+        
+        answer = reply['answer']
+        ans_split = answer.split()
+        #print(len(ans_split))
+        wps = 4 #240 wpm, absurdly fast typer, average is 40 wpm
+        calc = len(ans_split)/wps
+        #Busy wait, thread is blocking and not letting other threads run (no concurrency support)
+        end_t = timer()
+        print("Took: ",end_t - start_t) # Time in seconds, e.g. 5.38091952400282
+        if (end_t-start_t) < calc:
+            print("Calc sec",calc)
+            time.sleep(calc - (end_t-start_t))
+        
+        
     return reply['answer']
 
 @app.route('/survey', methods=['GET', 'POST'])
@@ -93,9 +117,21 @@ def survey():
 def finished_survey():
     global user_survey_frame
     if request.method == 'POST':
-        survey_dict ={'age' : request.form['age'], 'realness' : request.form['realness'], 'responsiveness' : request.form['responsiveness'],
-        'consistency' : request.form['consistency'],'engagingness' : request.form['engagingness'], 'retention' : request.form['retention'] }
-        user_survey_frame = user_survey_frame.append({'userID' : session['userID'] , 'time' : session['userTime'], 'survey' : survey_dict } , ignore_index=True)
+    
+        survey_dict ={
+        'previousChatbots' : request.form['previousChatbots'],
+        'age' : request.form['age'],
+        'engagingness' : request.form['engagingness'],
+        'unresponsiveness' : request.form['unresponsiveness'], 
+        'realness' : request.form['realness'],
+        'inconsistency' : request.form['inconsistency'],
+        'relevancy' : request.form['relevancy'],
+        'repetitiveness' : request.form['repetitiveness'],
+        'responsiveness' : request.form['responsiveness'],
+        'retention' : request.form['retention'],
+        'persona' : request.form['persona'] }
+        
+        user_survey_frame = user_survey_frame.append({'userID' : session['userID'] , 'time' : session['userTime'], 'survey' : survey_dict, 'delay' : session['delay'] } , ignore_index=True)
         user_survey_frame.to_csv(r'data/user_test_survey.csv', index = False)
         print("OI, in end")
         

@@ -18,10 +18,17 @@
 	
        <div id="userInput">
 			
-          <input id="textInput" type="text" name="msg" placeholder="Ask me a question!" />
+          <input required id="textInput" type="text" name="msg" placeholder="Ask me a question!" />
 		  <script>
 			function getBotResponse() {
 			  var rawText = $("#textInput").val();
+			  var trim = $.trim(rawText);
+			  if (trim.length < 2)
+			  {
+				$("#textInput").val("");
+				return;
+			  }
+			  
 			  var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
 			  $("#textInput").val("");
 			  $("#chatbox").append(userHtml);
@@ -32,7 +39,7 @@
 			  var temp_div = '<div id="thinking"></div>';
 			  /*document.getElementById("textInput").disabled = true; */
 			  $("#chatbox").append(temp_div);
-			  
+			  var t0 = performance.now()
 			  $.get("/get_gen", { msg: rawText }).done(function(data) {
 				var botHtml = '<p class="botText"><span>' + data + "</span></p>";
 				$("#chatbox").append(botHtml);
@@ -40,12 +47,16 @@
 				  .getElementById("userInput")
 				  .scrollIntoView({ block: "start", behavior: "smooth" });
 			  $('#thinking').remove();
+			  var t1 = performance.now()	
+			  /*$("#textInput").val(t1-t0); */
 			  /*document.getElementById("textInput").disabled = false;*/
 			  });
 			}
 			$("#textInput").keypress(function(e) {
 			  if (e.which == 13) {
+				
 				getBotResponse();
+				
 				/* */
 			  }
 			});
