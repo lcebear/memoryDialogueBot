@@ -7,9 +7,17 @@ import numpy as np
 import requests
 import nltk
 from pattern.en import pluralize, singularize
+import tensorflow as tf
+from keras import backend as K
+import time
+import threading 
 
 import gpt_2_simple as gpt2
 import atexit
+
+global gen_counter
+gen_counter = 0
+my_lock = threading.Lock()
 
 def exit_handler():
     print('My application is ending! Saving data')
@@ -99,8 +107,15 @@ question_sentiment = "like" #default sentiment is to ask if you like something
 model_name = '124M'
 run_name ="run_10"
 
-sess = gpt2.start_tf_sess()
-gpt2.load_gpt2(sess, run_name=run_name)
+sess = gpt2.start_tf_sess(threads=8)
+
+global graph
+graph = tf.compat.v1.get_default_graph()
+
+with graph.as_default():
+    gpt2.load_gpt2(sess, run_name=run_name)
+
+
 
 def fetch_subject_sentiment(key):
     key = key.lower()
@@ -412,46 +427,86 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
     #print(agent_output)
     return agent_output
     
-def generate_reply(user_question, num_answers=1):
+def generate_reply(user_question, num_answers=20):
+    global gen_counter
     print("In generate_reply", user_question)
     text_input = "<|startoftext|>" + user_question
-    gen_ans =gpt2.generate(sess,
-                  run_name=run_name,
-                  length=40,
-                  temperature=1,
-                  prefix=text_input,
-                  truncate="<|endoftext|>",
-                  include_prefix=False,
-                  nsamples=num_answers,
-                  batch_size=num_answers,
-                  top_p=0.9,
-                  return_as_list=True
-                  )
-    print(gen_ans[0])
-    
+    #Before prediction
+    K.clear_session()
+    my_lock.acquire()
+    #try:
+    try:
+        print("acq lock", gen_counter)
+        gen_counter = gen_counter + 1
+    finally:
+        
+        time.sleep(1*gen_counter)
+        print("release lock")
+        my_lock.release()
+    while(True):
+        try: 
+            with graph.as_default():
+                gen_ans =gpt2.generate(sess,
+                              run_name=run_name,
+                              length=40,
+                              temperature=1,
+                              prefix=text_input,
+                              truncate="<|endoftext|>",
+                              include_prefix=False,
+                              nsamples=num_answers,
+                              batch_size=num_answers,
+                              top_p=0.9,
+                              return_as_list=True
+                              )
+            print(gen_ans[0])
+            break
+        except:
+            print("Tensorflow thread error: Called gen in parallel")#, threading.get_ident(), threading.enumerate())
+            
+            time.sleep(0.5)
+    #finally:       
+    K.clear_session()
+    #  my_lock.release()
+    my_lock.acquire()
+    try:
+        print("acq lock")
+        gen_counter = gen_counter - 1
+    finally:
+        print("release lock")
+        my_lock.release()
     return gen_ans
 
 def preprocess_reply(input_text):
+
     replaced = input_text.replace('<|startoftext|>', '')
+    temp_split = replaced.split('endoftext', maxsplit=1)
+    if len(temp_split) >1:
+        replaced = temp_split[0]
+        replaced = replaced.replace('<|', '')
     replaced = replaced.replace('<|endoftext|>', '')
     replaced = replaced.replace('?', '?\n')
     text_sentences = nlp(replaced)
     temp_saved =""
+    temp2 = ""
     has_answer = False
     for sentence in text_sentences.sents:
         if has_answer:
+            temp_saved=temp2
             break
         #print(sentence.text, len(sentence))
         if len(sentence)>1:
+            temp2 = temp_saved
             temp_saved = temp_saved + " " + sentence.text
             for token in sentence:
                 #print(token.text, token.pos_)
                 if token.text =="?":
-                    if len(temp_saved) > 1:
+                    if len(temp2) > 1:
                         has_answer = True
                         break
                     else:
                         temp_saved=""
+                        temp2=""
+            
     text_sentences = sent_tokenize(temp_saved)
     final =""
     count = 0

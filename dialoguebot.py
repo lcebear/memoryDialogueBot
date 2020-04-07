@@ -3,12 +3,15 @@ import runAgent as ra
 import pandas as pd
 from timeit import default_timer as timer
 import time
-
+import threading
+import numpy as np
 
 app = Flask(__name__) #An instance of class Flask will be our WSGI application.
 app.secret_key = b'\xd5\xedF\xc5\x0f]\x08EF\x06\x0b\xc9l\xd5\x94\x95'
 global idvar 
 idvar = 9999
+
+data_lock = threading.Lock()
 
 user_test_frame = pd.read_csv('data/user_test_id.csv')
 user_test_data_frame = pd.read_csv('data/user_test_data.csv')
@@ -16,22 +19,30 @@ user_survey_frame = pd.read_csv('data/user_test_survey.csv')
 idvar = int(user_test_frame['userID'].max())
 print(idvar)
 message_history = {}
-# Wait for 5 seconds
+
+delay_threshhold = 8
 
 
 @app.route('/', )
 def about():
     global user_test_frame
     print("Home- Session id:", session.get('userID'))
+    
+    session['maxDelay'] = 0
+    session['avgDelay'] = 0
     if session.get('userID') != None:
         pass
     else:
-        global idvar
-        idvar +=1
-        session['userID'] = idvar
-        user_test_frame = user_test_frame.append({'userID' : session['userID'] , 'time' : pd.Timestamp.now() } , ignore_index=True)
-        user_test_frame.to_csv(r'data/user_test_id.csv', index = False)
-        print("set ID")
+        data_lock.acquire()
+        try:
+            global idvar
+            idvar +=1
+            session['userID'] = idvar
+            user_test_frame = user_test_frame.append({'userID' : session['userID'] , 'time' : pd.Timestamp.now() } , ignore_index=True)
+            user_test_frame.to_csv(r'data/user_test_id.csv', index = False)
+            print("set ID")
+        finally:
+            data_lock.release()
     
     
     session['delay'] = True if(session.get('userID') % 2) else False
@@ -70,29 +81,52 @@ def get_bot_response():
     global message_history
     temp_l = message_history[session['userID']]
     
-    #TODO save messages (user input and bot output)
-    userText = request.args.get('msg') 
+    #save messages (user input and bot output)
+    userText = request.args.get('msg')
+    user_msg_time = pd.Timestamp.now().round('s')
     reply = ra.get_reply(userText)
-    temp_l.append((userText,reply))
-    message_history[session['userID']] = temp_l
-    #print(message_history[session['userID']])
+
+
     
     #artificial dynamic delay
     if session.get('delay') == True:    
         
         answer = reply['answer']
         ans_split = answer.split()
-        #print(len(ans_split))
-        wps = 4 #240 wpm, absurdly fast typer, average is 40 wpm
+        
+        wps = 2 #240 wpm, absurdly fast typer, average is 40 wpm
         calc = len(ans_split)/wps
+        #introducin delay mimics human behavior but too long delay may be disruptive even if it's realistic.
+        #therefore values above threshhold is suppressed using ln 
+        if calc > delay_threshhold:
+            calc = delay_threshhold + np.log(calc) - 2
         #Busy wait, thread is blocking and not letting other threads run (no concurrency support)
         end_t = timer()
         print("Took: ",end_t - start_t) # Time in seconds, e.g. 5.38091952400282
         if (end_t-start_t) < calc:
             print("Calc sec",calc)
             time.sleep(calc - (end_t-start_t))
-        
-        
+            
+    bot_msg_time = pd.Timestamp.now().round('s')    
+    temp_l.append((userText,reply,user_msg_time, bot_msg_time))
+    
+    #get number of messages before this one.
+    n_msg = len(message_history[session['userID']])
+    
+    #update dictionary of messages for this user 
+    message_history[session['userID']] = temp_l  
+    curr_t = timer()
+    temp_diff_time = curr_t - start_t
+    
+    #calculate and update mean delay 
+    mean_delay = session['avgDelay']*n_msg 
+    mean_delay = (mean_delay+ temp_diff_time)/(n_msg+1)
+    session['avgDelay'] = mean_delay
+    
+    #update max delay 
+    if temp_diff_time > session.get('maxDelay'):
+        session['maxDelay'] = temp_diff_time
+    
     return reply['answer']
 
 @app.route('/survey', methods=['GET', 'POST'])
@@ -105,11 +139,15 @@ def survey():
         #temp_df = user_test_data_frame.loc[user_test_data_frame['userID'] == session['userID']]
         #if len(temp_df)>0:
         session['userTime'] = pd.Timestamp.now().round('s')
-        user_test_data_frame = user_test_data_frame.append({'userID' : session['userID'] , 'time' : session['userTime'],
-        'messages' : message_history[session['userID']], 'num_messages' : len(message_history[session['userID']]) } , ignore_index=True)
-        user_test_data_frame.to_csv(r'data/user_test_data.csv', index = False)
-        print("Saving generated_answers_kb")
-        ra.agent.generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
+        data_lock.acquire()
+        try:
+            user_test_data_frame = user_test_data_frame.append({'userID' : session['userID'] , 'time' : session['userTime'],
+            'messages' : message_history[session['userID']], 'num_messages' : len(message_history[session['userID']]) } , ignore_index=True)
+            user_test_data_frame.to_csv(r'data/user_test_data.csv', index = False)
+            print("Saving generated_answers_kb")
+            ra.agent.generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
+        finally:
+            data_lock.release()
  
     return render_template('survey.html')
     
@@ -130,10 +168,14 @@ def finished_survey():
         'responsiveness' : request.form['responsiveness'],
         'retention' : request.form['retention'],
         'persona' : request.form['persona'] }
-        
-        user_survey_frame = user_survey_frame.append({'userID' : session['userID'] , 'time' : session['userTime'], 'survey' : survey_dict, 'delay' : session['delay'] } , ignore_index=True)
-        user_survey_frame.to_csv(r'data/user_test_survey.csv', index = False)
-        print("OI, in end")
+        data_lock.acquire()
+        try:
+            user_survey_frame = user_survey_frame.append({'userID' : session['userID'] , 'time' : session['userTime'],
+            'survey' : survey_dict, 'delay' : session['delay'], 'max_delay' : session.get('maxDelay'), 'avg_delay' : session['avgDelay'] } , ignore_index=True)
+            user_survey_frame.to_csv(r'data/user_test_survey.csv', index = False)
+            print("OI, in end")
+        finally:
+            data_lock.release()
         
         #TODO save survey+messages+id+time
     return render_template('end.html')
