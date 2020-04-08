@@ -8,8 +8,10 @@ import requests
 import nltk
 from pattern.en import pluralize, singularize
 import tensorflow as tf
+import tensorflow_hub as hub
 from keras import backend as K
 import time
+from timeit import default_timer as timer
 import threading 
 
 import gpt_2_simple as gpt2
@@ -19,9 +21,30 @@ global gen_counter
 gen_counter = 0
 my_lock = threading.Lock()
 
+
+
+
+
+# Create graph and finalize (finalizing optional but recommended).
+g = tf.Graph()
+with g.as_default():
+  # We will be feeding 1D tensors of text into the graph.
+  text_input = tf.placeholder(dtype=tf.string, shape=[None])
+  embed = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
+  embedded_text = embed(text_input)
+  init_op = tf.group([tf.global_variables_initializer(), tf.tables_initializer()])
+g.finalize()
+
+
+# Create session and initialize.
+sim_sess = tf.Session(graph=g)
+sim_sess.run(init_op)
+
+
 def exit_handler():
     print('My application is ending! Saving data')
     generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
+    like_memory = pd.read_csv('data/sentiment_memory.csv')
 
 atexit.register(exit_handler)
 
@@ -45,6 +68,20 @@ temp = np.random.random(len(like_memory))
 like_memory['sentiment'] = temp
 like_memory['lc_subject'] = np.nan
 
+#fetching retrieval questions with their question id, once so we don't have to repeat this operation
+retrieval_question_l = []
+retrieval_qid_l = []
+#todo optimize, only need to retrieve these once
+for i in range(len(retrieval_q)):
+    #q = retrieval_q.question[i]
+    #qid = retrieval_q.answer_id[i]
+    retrieval_question_l.append(retrieval_q.question[i])
+    retrieval_qid_l.append(retrieval_q.answer_id[i])
+
+global retrieval_embeddings   
+with g.as_default():
+    global retrieval_embeddings
+    retrieval_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: retrieval_question_l})    
 
 #def calculate_topic_sent(): 
 #Calculate topic average sentiment (not very useful considering random function mean 0.5)
@@ -132,29 +169,35 @@ def fetch_subject_sentiment(key):
 #Input subject to find topic: Apple -> Food/Fruit
 def fetch_noun_relations(noun):
     temp_noun_set = set()
-    query_noun = noun
-    api_path = 'http://api.conceptnet.io/query?start=/c/en/' + query_noun + '&rel=/r/IsA'
-    obj = requests.get(api_path).json()
-    #print(obj['edges'][0])
-    
-    #outer for traverses the edges, inner for traverses the content in the 'end' tag
-    for j in range(len(obj['edges'])):
-        #print("Description:", obj['edges'][j]['surfaceText'])
-        for i in obj['edges'][j]['end']:
-            #if i == 'label':
-             #   print("Label:", obj['edges'][j]['end'][i]) 
-            #elif i == 'sense_label':
-             #   print("Sense_label:", obj['edges'][j]['end'][i])
-            temp_string = obj['edges'][j]['end'][i]
-            text = nlp(temp_string)
-              
-            for token in text:
-                tag = nltk.pos_tag([token.text])
-                if token.pos_ == "NOUN" or tag == "NN" or tag == 'NNS':
-                    temp_noun_set.add(token.text)
-       
-    #print(temp_noun_set)
-    return temp_noun_set
+    #return temp_noun_set
+    try:
+        
+        query_noun = noun
+        api_path = 'http://api.conceptnet.io/query?start=/c/en/' + query_noun + '&rel=/r/IsA'
+        
+        obj = requests.get(api_path).json()
+        #print(obj['edges'][0])
+        
+        #outer for traverses the edges, inner for traverses the content in the 'end' tag
+        for j in range(len(obj['edges'])):
+            #print("Description:", obj['edges'][j]['surfaceText'])
+            for i in obj['edges'][j]['end']:
+                #if i == 'label':
+                 #   print("Label:", obj['edges'][j]['end'][i]) 
+                #elif i == 'sense_label':
+                 #   print("Sense_label:", obj['edges'][j]['end'][i])
+                temp_string = obj['edges'][j]['end'][i]
+                text = nlp(temp_string)
+                  
+                for token in text:
+                    tag = nltk.pos_tag([token.text])
+                    if token.pos_ == "NOUN" or tag == "NN" or tag == 'NNS':
+                        temp_noun_set.add(token.text)
+    except Exception as e:
+        print(e)
+    finally:
+        #print(temp_noun_set)
+        return temp_noun_set
   
 #input noun-> find noun's IsA relations e.g Apple is a fruit -> compare IsA relations with existing topics.
 def check_noun_topic_exist_memory(noun):
@@ -178,7 +221,25 @@ def is_noun_existing_subject(noun):
 #Check if noun is a known topic in memory
 def is_noun_existing_topic(noun):
     return noun in memory_topics
-    
+
+#TODO can be optimized to make use of gpu computing by getting the embedding for all questions at same time.
+def similarity_universal_sentence_decoder(user_in, in_emb):
+    #s_t = timer()
+    #global embedded_text
+    #global text_input
+    max_sim = 0
+    max_index = 0
+    #question.append(user_in)
+    with g.as_default():
+        result = sim_sess.run(embedded_text, feed_dict={text_input: [user_in]})
+    for i in range(len(in_emb)):
+            sim = np.inner(in_emb[i],result[0])
+            if sim > max_sim:
+                max_sim = sim
+                max_index = i
+    #end_t = timer()
+    #print(end_t - s_t, "Took this long in similarity func")
+    return max_index, max_sim#np.inner(result[0],result[1])
     
 def similarity_calc(X,Y):
     X = X.lower() #input(q).lower() 
@@ -210,6 +271,61 @@ def similarity_calc(X,Y):
             c+= l1[i]*l2[i] 
     cosine = c / float((sum(l1)*sum(l2))**0.5)
     return cosine
+
+#used to more quickly find max similarity between likes template questions and user input. 
+#If high enough similarity, then more time is invested in process_user_input(). 
+#This is done to avoid calling conceptnet for unseen nouns-
+#- when the template question with highest similarity is not high enough to be used.
+def simple_process_user_input(user_input):
+    user_input = user_input.lower()
+    extracted_nouns = []
+    form_input = user_input
+    global question_sentiment
+    question_sentiment = "like"
+    noun = None
+    prev_token = None
+    sentiment_exist = False
+    
+    text = nlp(user_input)
+    
+    for token in text:
+        if token.text in sentiment_opt:
+            question_sentiment = token.text
+            sentiment_exist = True
+            
+        tag = nltk.pos_tag([token.text])
+        if token.pos_ == "NOUN" or tag[0][1] == "NN" or tag[0][1] == 'NNS':
+            noun = token.text
+            if prev_token != None:
+                temp_str = prev_token + " " + token.text
+                noun = temp_str
+                break
+
+        prev_token = token.text if token.pos_ == "NOUN" else None
+
+
+
+    
+    if noun != None:
+        form_input = form_input.replace(noun, wildcards["noun"])
+    if sentiment_exist:
+        form_input = form_input.replace(question_sentiment, wildcards['sentiment'])
+        
+    max_sim = 0
+
+    sent_is_positive = False
+    if question_sentiment in sentiment_opt_pos:
+        sent_is_positive = True
+    for i in range(len(template_q)):
+        if sent_is_positive == False and template_q.default_positive[i] == 1:
+            continue
+        q = template_q.question[i]
+        cosine = similarity_calc(q,form_input)
+
+        if cosine > max_sim:
+            max_sim = cosine
+
+    return max_sim   
 
 #process the user input 
 def process_user_input(user_input):
@@ -290,22 +406,20 @@ def find_question_n_answer_retrieval(user_input):
     max_sim_q = None
     answer_id = 0
     answer = None
-      
-    for i in range(len(retrieval_q)):
-        q = retrieval_q.question[i]
-        qid = retrieval_q.answer_id[i]
-        
-        cosine = similarity_calc(q,user_input)
-
-        if int(cosine) == 1:
-            max_sim_q = q
-            answer_id = qid
-            max_sim = cosine
-            break
-        elif cosine > max_sim:
-            max_sim = cosine
-            max_sim_q = q
-            answer_id = qid
+    
+        #cosine = similarity_universal_sentence_decoder(user_input, q)#similarity_calc(q,user_input)
+    q_index, max_sim = similarity_universal_sentence_decoder(user_input, retrieval_embeddings)#, retrieval_question_l)
+    max_sim_q = retrieval_question_l[q_index]
+    answer_id = retrieval_qid_l[q_index]
+        #if cosine > 0.98:
+        #    max_sim_q = q
+        #    answer_id = qid
+        #    max_sim = cosine
+        #    break
+        #elif cosine > max_sim:
+        #    max_sim = cosine
+        #    max_sim_q = q
+        #    answer_id = qid
             
     fetch_answer = retrieval_a.loc[retrieval_a['answer_id'] == answer_id]
     second_answer = retrieval_a.loc[retrieval_a['optional_id'] == answer_id] 
@@ -318,6 +432,7 @@ def find_question_n_answer_retrieval(user_input):
     
 #find a suitable question template and return it
 def find_question_template(processed_text_input):
+    #s_t = timer()
     max_sim = 0
     max_sim_q = None
     answer_id = 0
@@ -330,9 +445,9 @@ def find_question_template(processed_text_input):
         q = template_q.question[i]
         qid = template_q.answer_id[i]
         
-        cosine = similarity_calc(q,processed_text_input)
+        cosine = similarity_calc(q,processed_text_input) #similarity_universal_sentence_decoder(processed_text_input, q)#
 
-        if int(cosine) == 1:
+        if cosine > 0.98:
             max_sim_q = q
             answer_id = qid
             max_sim = cosine
@@ -341,7 +456,9 @@ def find_question_template(processed_text_input):
             max_sim = cosine
             max_sim_q = q
             answer_id = qid
-        
+            
+    #end_t = timer()
+    #print("Took this long in find_question_template:", end_t - s_t)
     #print(max_sim_q, max_sim)
     return answer_id, max_sim, max_sim_q 
 
@@ -428,6 +545,17 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
     return agent_output
     
 def generate_reply(user_question, num_answers=20):
+    ret_num = 0
+    #adding question mark if sentence doesn't have it
+    temp = ""
+    tokens = word_tokenize(user_question)
+    
+    try:
+        if nltk.tag.pos_tag([tokens[-1]])[0][1] != '.':
+            user_question = user_question + "?"
+    except Exception as e:
+        print("failed to add question mark to user sentence", e)
+    
     global gen_counter
     print("In generate_reply", user_question)
     text_input = "<|startoftext|>" + user_question
@@ -436,12 +564,12 @@ def generate_reply(user_question, num_answers=20):
     my_lock.acquire()
     #try:
     try:
-        print("acq lock", gen_counter)
+        #print("acq lock", gen_counter)
         gen_counter = gen_counter + 1
     finally:
         
         time.sleep(1*gen_counter)
-        print("release lock")
+        #print("release lock")
         my_lock.release()
     while(True):
         try: 
@@ -458,10 +586,18 @@ def generate_reply(user_question, num_answers=20):
                               top_p=0.9,
                               return_as_list=True
                               )
-            print(gen_ans[0])
+            ret_num = 0
+            #Trying to prevent empty reply
+            for i in range(num_answers-1):
+                temp_string = gen_ans[ret_num].strip()
+                if len(temp_string) < 2:
+                    ret_num+=1
+                else:
+                    break
+            print(gen_ans[ret_num])
             break
-        except:
-            print("Tensorflow thread error: Called gen in parallel")#, threading.get_ident(), threading.enumerate())
+        except Exception as e:
+            print("Tensorflow thread error: Called gen in parallel", e, ret_num, gen_ans)#, threading.get_ident(), threading.enumerate())
             
             time.sleep(0.5)
     #finally:       
@@ -469,12 +605,12 @@ def generate_reply(user_question, num_answers=20):
     #  my_lock.release()
     my_lock.acquire()
     try:
-        print("acq lock")
+        #print("acq lock")
         gen_counter = gen_counter - 1
     finally:
-        print("release lock")
+        #print("release lock")
         my_lock.release()
-    return gen_ans
+    return gen_ans[ret_num]
 
 def preprocess_reply(input_text):
 
