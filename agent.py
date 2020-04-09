@@ -71,17 +71,25 @@ like_memory['lc_subject'] = np.nan
 #fetching retrieval questions with their question id, once so we don't have to repeat this operation
 retrieval_question_l = []
 retrieval_qid_l = []
-#todo optimize, only need to retrieve these once
+#only need to retrieve these once
 for i in range(len(retrieval_q)):
     #q = retrieval_q.question[i]
     #qid = retrieval_q.answer_id[i]
     retrieval_question_l.append(retrieval_q.question[i])
     retrieval_qid_l.append(retrieval_q.answer_id[i])
+    
+likes_question_l = []
+likes_qid_l = []
+#only need to retrieve these once
+for i in range(len(template_q)):
+    likes_question_l.append(template_q.question[i])
+    likes_qid_l.append(template_q.answer_id[i])
 
-global retrieval_embeddings   
+global retrieval_embeddings, likes_embeddings   
 with g.as_default():
     global retrieval_embeddings
-    retrieval_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: retrieval_question_l})    
+    retrieval_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: retrieval_question_l})
+    likes_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: likes_question_l})
 
 #def calculate_topic_sent(): 
 #Calculate topic average sentiment (not very useful considering random function mean 0.5)
@@ -166,10 +174,10 @@ def fetch_subject_sentiment(key):
     #print(key, ans_sent)
     return ans_sent
     
-#Input subject to find topic: Apple -> Food/Fruit
+#Input subject to find topic: Apple -> Food/Fruit, Currently disabled due to performance.
 def fetch_noun_relations(noun):
     temp_noun_set = set()
-    #return temp_noun_set
+    return temp_noun_set
     try:
         
         query_noun = noun
@@ -280,6 +288,7 @@ def simple_process_user_input(user_input):
     user_input = user_input.lower()
     extracted_nouns = []
     form_input = user_input
+    form_input_2 = user_input
     global question_sentiment
     question_sentiment = "like"
     noun = None
@@ -289,9 +298,11 @@ def simple_process_user_input(user_input):
     text = nlp(user_input)
     
     for token in text:
+        #print(token.text)
         if token.text in sentiment_opt:
             question_sentiment = token.text
             sentiment_exist = True
+            continue
             
         tag = nltk.pos_tag([token.text])
         if token.pos_ == "NOUN" or tag[0][1] == "NN" or tag[0][1] == 'NNS':
@@ -299,32 +310,31 @@ def simple_process_user_input(user_input):
             if prev_token != None:
                 temp_str = prev_token + " " + token.text
                 noun = temp_str
-                break
+                #break
 
         prev_token = token.text if token.pos_ == "NOUN" else None
 
 
 
     
-    if noun != None:
+    if noun != None:       
+        form_input_2 = form_input_2.replace(noun, wildcards["topic"])
         form_input = form_input.replace(noun, wildcards["noun"])
     if sentiment_exist:
         form_input = form_input.replace(question_sentiment, wildcards['sentiment'])
+        form_input_2 = form_input_2.replace(question_sentiment, wildcards['sentiment'])
         
-    max_sim = 0
 
-    sent_is_positive = False
-    if question_sentiment in sentiment_opt_pos:
-        sent_is_positive = True
-    for i in range(len(template_q)):
-        if sent_is_positive == False and template_q.default_positive[i] == 1:
-            continue
-        q = template_q.question[i]
-        cosine = similarity_calc(q,form_input)
 
-        if cosine > max_sim:
-            max_sim = cosine
-
+    max_index, max_sim = similarity_universal_sentence_decoder(form_input, likes_embeddings)
+    max_index_2, max_sim_2 = similarity_universal_sentence_decoder(form_input_2, likes_embeddings)
+    if max_sim_2 > max_sim:
+        max_index = max_index_2
+        max_sim = max_sim_2
+        
+    max_sim_q = likes_question_l[max_index]
+    answer_id = likes_qid_l[max_index]
+    print(max_sim, question_sentiment, form_input, form_input_2, max_sim_q )
     return max_sim   
 
 #process the user input 
@@ -372,7 +382,8 @@ def process_user_input(user_input):
             noun = n[0]
             noun_topics = [like_memory.loc[like_memory['lc_subject'] == noun].topic.iloc[0]]
             break
-    #If the noun is not a recognized topic or subject...      
+    #If the noun is not a recognized topic or subject...
+    # TODO: Currently disabled. Perform this operation after generating an answer. 
     if noun == None:
         for n in extracted_nouns:
             #calls conceptNet to find the noun's IsA relations and checks if the relations == existing topic
@@ -436,27 +447,10 @@ def find_question_template(processed_text_input):
     max_sim = 0
     max_sim_q = None
     answer_id = 0
-    sent_is_positive = False
-    if question_sentiment in sentiment_opt_pos:
-        sent_is_positive = True
-    for i in range(len(template_q)):
-        if sent_is_positive == False and template_q.default_positive[i] == 1:
-            continue
-        q = template_q.question[i]
-        qid = template_q.answer_id[i]
         
-        cosine = similarity_calc(q,processed_text_input) #similarity_universal_sentence_decoder(processed_text_input, q)#
-
-        if cosine > 0.98:
-            max_sim_q = q
-            answer_id = qid
-            max_sim = cosine
-            break
-        elif cosine > max_sim:
-            max_sim = cosine
-            max_sim_q = q
-            answer_id = qid
-            
+    max_index, max_sim = similarity_universal_sentence_decoder(processed_text_input, likes_embeddings)
+    max_sim_q = likes_question_l[max_index]
+    answer_id = likes_qid_l[max_index]
     #end_t = timer()
     #print("Took this long in find_question_template:", end_t - s_t)
     #print(max_sim_q, max_sim)

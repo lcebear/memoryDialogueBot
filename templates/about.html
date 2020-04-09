@@ -25,8 +25,10 @@ Afterwards, please fill in a short 10 question survey to finish the test. </p>
 <p>
 By participating in this test you agree that all data, including messages sent to the agent and answers to the survey, will be saved for research purposes.
 Messages may be re-used in the current or a future version of the system, in which the system is publicly available under an MIT license.
-The data will not be sold to any third-parties. 
+The data will not be sold to any third-parties. If you finish the survey and wish to withdraw afterwards
+then Please remember your ID: {{ session['userID'] }}
 </p>
+
 <form action="/chat" method="post">
 <p><input type="checkbox" required name="terms"> <u>I understand and agree with what is stated on this page.</u></p>
 <p><input type="submit" value="Continue"></p>

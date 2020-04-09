@@ -19,3 +19,4 @@ Do you have a favorite <topic>?,3,1
 Do you <sentiment> <noun> at all?,1,0
 Do you have any favorite <topic>?,3,1
 do you <sentiment> any type of <topic>?,2,0
+do you <sentiment> any <topic>?,2,0
