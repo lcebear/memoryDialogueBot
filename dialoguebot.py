@@ -16,6 +16,7 @@ data_lock = threading.Lock()
 user_test_frame = pd.read_csv('data/user_test_id.csv')
 user_test_data_frame = pd.read_csv('data/user_test_data.csv')
 user_survey_frame = pd.read_csv('data/user_test_survey.csv')
+
 idvar = int(user_test_frame['userID'].max())
 print(idvar)
 message_history = {}
@@ -30,6 +31,7 @@ def about():
     
     session['maxDelay'] = 0
     session['avgDelay'] = 0
+    #if the user has an id then pass this if-else, else give user an ID
     if session.get('userID') != None:
         pass
     else:
@@ -41,9 +43,18 @@ def about():
             user_test_frame = user_test_frame.append({'userID' : session['userID'] , 'time' : pd.Timestamp.now() } , ignore_index=True)
             user_test_frame.to_csv(r'data/user_test_id.csv', index = False)
             print("set ID")
+            
         finally:
             data_lock.release()
-    
+            
+        ra.agent.df_lock.acquire()
+        try:
+            ra.agent.user_history = ra.agent.user_history.append({'userID' : session['userID'] , 'message_history' : [], 'true_sentiment' : [] } , ignore_index=True)
+            print("Added ", session['userID'], "to user history")
+        except Exception as e:
+            print(e, "tryed to add userID to user history")
+        finally:
+            ra.agent.df_lock.release()
     
     session['delay'] = True if(session.get('userID') % 2) else False
     #g.value = idvar
@@ -84,7 +95,7 @@ def get_bot_response():
     #save messages (user input and bot output)
     userText = request.args.get('msg')
     user_msg_time = pd.Timestamp.now().round('s')
-    reply = ra.get_reply(userText)
+    reply = ra.get_reply(userText, session['userID'])
 
 
     
@@ -144,10 +155,16 @@ def survey():
             user_test_data_frame = user_test_data_frame.append({'userID' : session['userID'] , 'time' : session['userTime'],
             'messages' : message_history[session['userID']], 'num_messages' : len(message_history[session['userID']]) } , ignore_index=True)
             user_test_data_frame.to_csv(r'data/user_test_data.csv', index = False)
+        finally:
+            data_lock.release()
+            
+        ra.agent.df_lock.acquire()
+        try:
+            ra.agent.user_history.to_csv(r'data/user_history.csv', index = False)
             print("Saving generated_answers_kb")
             ra.agent.generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
         finally:
-            data_lock.release()
+            ra.agent.df_lock.release()
  
     return render_template('survey.html')
     

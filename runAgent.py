@@ -1,9 +1,15 @@
 import agent
 from timeit import default_timer as timer
+import random
 input_sentence = ''
 similarity_threshold = 0.85 #Below this threshhold, the question is generated isntead of retrieved.
 sim_threshold_likes = 0.9
-def get_reply(input_sentence):
+
+#Exceptions for saying "I told you already" are 'Hello' 'bye' 'how are you?' and things regarding 'today'
+#More exceptions may need to be added
+exception_qid = [92, 94, 138, 139, 140, 84, 85, 78, 79, 82, 80 ]
+
+def get_reply(input_sentence ,user_id):
     answer_id = 0
     max_sim_val = 0
     max_sim_q = None
@@ -11,6 +17,19 @@ def get_reply(input_sentence):
     orig_noun = None
     noun_topics = None
     processed_text_input = None
+    
+    user_msg_history = []
+    
+    curr_user = agent.user_history.loc[agent.user_history['userID'] == user_id]
+    #print(curr_user, user_id)
+    if len(curr_user) > 0:
+        if len(curr_user.message_history.iloc[0]) > 0:
+            user_msg_history = curr_user.message_history.iloc[0]
+            #print(user_msg_history)
+            #pass#agent.user_history.loc[agent.user_history['userID'] == user_id][message_history] = [("this", "is a cool list", 0)]#print(agent.user_history['userID'][user_id])
+        else:
+            pass
+            #print(curr_user.message_history.iloc[0])
     
     try:
         s_t = timer()
@@ -45,6 +64,23 @@ def get_reply(input_sentence):
                     answer_id = answer_id_2
                     max_sim_q = max_sim_q_2
                     db_name = "retrieval"
+                    previous_answer = check_msg_history(user_msg_history, answer_id)
+                    if previous_answer != None:
+                        answer = previous_answer
+                    else:
+                        if answer_id in exception_qid:
+                            pass
+                        else:
+                            user_msg_history.append((input_sentence, answer, answer_id))
+                            agent.df_lock.acquire()
+                            try:
+                                #Todo, implement true_sentiment
+                                agent.user_history.at[curr_user.index.values[0], 'message_history'] = user_msg_history
+                            finally:
+                                agent.df_lock.release()
+                        
+                       
+                        
                     
                 else:
                     answer = generated_reply_helper(input_sentence)
@@ -76,10 +112,40 @@ def generated_reply_helper(input_sentence):
     
     output_sentence = agent.generate_reply(input_sentence)
     ans = agent.preprocess_reply(output_sentence)
-    
-    agent.generated_kb = agent.generated_kb.append({'question' : input_sentence, 'answer' : output_sentence, "processed_answer" : ans } , ignore_index=True)
+    agent.df_lock.acquire()
+    try:
+        agent.generated_kb = agent.generated_kb.append({'question' : input_sentence, 'answer' : output_sentence, "processed_answer" : ans } , ignore_index=True)
     #agent.generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
     #print(agent.generated_kb.answer)
     #print(ans, "GN")
-    return ans
+    finally:
+        agent.df_lock.release()
+        return ans
+    
+    
+def check_msg_history(msg_hist, question_id):
+    ans = None
+    #print(msg_hist, msg_hist[0])
+    #Some default replies entries are "" to add some chance to just repeat the answer instead of always saying "I told you already" + repeat
+    default_replies = ["Maybe you forgot.", "", "I think I told you earlier.",
+    "", "I told you before.", "I told you previously.",
+    "I guess you forgot.", "I thought I told you already.", ""]
+    
+    
+    found_ans = ""
+    found_answer = False 
+    for question, answer, qid in msg_hist:
+        if qid == question_id:
+            if qid in exception_qid:
+                continue
+            else:
+                found_ans = answer
+                found_answer = True
+                break
+            
+    if found_answer:
+        ans = default_replies[random.randint(0, len(default_replies )-1)] + " " + found_ans
+        ans = ans.strip()
+    
+    return ans 
     

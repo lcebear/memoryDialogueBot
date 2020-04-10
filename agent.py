@@ -19,7 +19,12 @@ import atexit
 
 global gen_counter
 gen_counter = 0
+
+#To avoid the generative model to crash due to simultanous or near simultaneous calls from different users
 my_lock = threading.Lock()
+
+#lock to be used when trying to save to dataframes/csv that is orignally loaded in this file
+df_lock = threading.Lock()
 
 
 
@@ -44,7 +49,7 @@ sim_sess.run(init_op)
 def exit_handler():
     print('My application is ending! Saving data')
     generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
-    like_memory = pd.read_csv('data/sentiment_memory.csv')
+    #like_memory.to_csv(r'data/sentiment_memory.csv', index = False)
 
 atexit.register(exit_handler)
 
@@ -59,7 +64,10 @@ template_a = pd.read_csv('data/answer_templates.csv')
 retrieval_a = pd.read_csv('data/answer_templates_2.csv')
 like_memory = pd.read_csv('data/sentiment_memory.csv')
 generated_kb = pd.read_csv('data/generated_answers_kb.csv')
+user_history = pd.read_csv('data/user_history.csv')
 
+#Convert 'string' to  list
+user_history['message_history'] = pd.eval(user_history['message_history'])
 
 #Some fruits are listed under "Food" topic, so the line below is temporary remove solution
 like_memory = like_memory.drop_duplicates(subset='subject', keep="last")
@@ -385,21 +393,25 @@ def process_user_input(user_input):
     #If the noun is not a recognized topic or subject...
     # TODO: Currently disabled. Perform this operation after generating an answer. 
     if noun == None:
-        for n in extracted_nouns:
-            #calls conceptNet to find the noun's IsA relations and checks if the relations == existing topic
-            noun_topics = check_noun_topic_exist_memory(n[0])
-            #if the topic exist but the noun is not known, add it to our list with random sentiment
-            if len(noun_topics) >0:
-                noun = n[0]
-                orig_noun = n[1]
-                #if the noun is not a known subject (Apple, Soccer, Pasta) then add it with random sentiment  
-                noun_sent = np.random.random(1)
-                for topic in noun_topics:
-                    like_memory = like_memory.append(
-                        {'subject' : noun , 'topic' : topic, 'sentiment' : noun_sent, 'lc_subject' : noun.lower()} ,
-                        ignore_index=True)
-                break
-    
+        df_lock.acquire()
+        try:
+            for n in extracted_nouns:
+                #calls conceptNet to find the noun's IsA relations and checks if the relations == existing topic
+                noun_topics = check_noun_topic_exist_memory(n[0])
+                #if the topic exist but the noun is not known, add it to our list with random sentiment
+                if len(noun_topics) >0:
+                    noun = n[0]
+                    orig_noun = n[1]
+                    #if the noun is not a known subject (Apple, Soccer, Pasta) then add it with random sentiment  
+                    noun_sent = np.random.random(1)
+                    
+                    for topic in noun_topics:
+                        like_memory = like_memory.append(
+                            {'subject' : noun , 'topic' : topic, 'sentiment' : noun_sent, 'lc_subject' : noun.lower()} ,
+                            ignore_index=True)
+                    break
+        finally:
+            df_lock.release()
     if noun != None:
         if is_noun_existing_topic(noun):
             noun_topics = [noun]
