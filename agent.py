@@ -54,7 +54,7 @@ def exit_handler():
 atexit.register(exit_handler)
 
 
-nlp = spacy.load('en_core_web_sm')
+nlp = spacy.load('en_core_web_lg')
 
 
 #Read in template questions,answers and memory
@@ -93,11 +93,7 @@ for i in range(len(template_q)):
     likes_question_l.append(template_q.question[i])
     likes_qid_l.append(template_q.answer_id[i])
 
-global retrieval_embeddings, likes_embeddings   
-with g.as_default():
-    global retrieval_embeddings
-    retrieval_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: retrieval_question_l})
-    likes_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: likes_question_l})
+
 
 #def calculate_topic_sent(): 
 #Calculate topic average sentiment (not very useful considering random function mean 0.5)
@@ -112,6 +108,15 @@ for topic in memory_topics:
     topic_sent[topic] = count/divisor
 #print(topic_sent)
 
+global retrieval_embeddings, likes_embeddings, topic_embeddings  
+with g.as_default():
+    global retrieval_embeddings, likes_embeddings, topic_embeddings
+    retrieval_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: retrieval_question_l})
+    likes_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: likes_question_l})
+    #topic_embeddings = sim_sess.run(embedded_text, feed_dict={text_input: memory_topics})
+
+topic_tokens = ' '.join(map(str, memory_topics)) 
+topic_tokens = nlp(topic_tokens)
 #Extract a number of favorite noun's for each topic for easy access
 topic_favorites = {}
 select_n = 5
@@ -181,10 +186,28 @@ def fetch_subject_sentiment(key):
         #print(temp_l) #if subject listed under multiple 
     #print(key, ans_sent)
     return ans_sent
+
+
     
 #Input subject to find topic: Apple -> Food/Fruit, Currently disabled due to performance.
 def fetch_noun_relations(noun):
     temp_noun_set = set()
+    
+    
+    #alternative to ConceptNet, calculate word embedding similarity
+    max_sim = 0
+    topic = None
+    n_token = nlp(noun)
+    for token in topic_tokens:
+        sim = n_token.similarity(token)
+        if sim > max_sim:
+            topic = token.text
+            max_sim = sim
+    #topic_index, max_sim = similarity_universal_sentence_decoder(noun, topic_embeddings)
+    #print("BUG TEST: ",noun, memory_topics[topic_index], max_sim)
+    #temp_noun_set.add(memory_topics[topic_index])
+    print("BUG TEST: ", noun, topic, max_sim)
+    temp_noun_set.add(topic)
     return temp_noun_set
     try:
         
@@ -529,6 +552,7 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
         #print(noun_topics)
         if question_sentiment in sentiment_opt_pos:
             temp_nouns = topic_favorites[noun_topics[0]]
+            #like_memory.loc[like_memory['sentiment'] > 0.5 && like_memory['topic'] == noun_topics[0]].sample().subject
         elif question_sentiment in sentiment_opt_neg:
             temp_nouns = topic_dislike[noun_topics[0]]
         sing_noun = singularize(noun)

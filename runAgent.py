@@ -10,6 +10,7 @@ sim_threshold_likes = 0.9
 exception_qid = [92, 94, 138, 139, 140, 84, 85, 78, 79, 82, 80 ]
 
 def get_reply(input_sentence ,user_id):
+    
     answer_id = 0
     max_sim_val = 0
     max_sim_q = None
@@ -30,6 +31,16 @@ def get_reply(input_sentence ,user_id):
         else:
             pass
             #print(curr_user.message_history.iloc[0])
+    else:
+        agent.df_lock.acquire()
+        try:
+            agent.user_history = agent.user_history.append({'userID' : user_id , 'message_history' : [], 'true_sentiment' : [] } , ignore_index=True)
+            print("Added ", user_id, "to user history")
+            curr_user = agent.user_history.loc[agent.user_history['userID'] == user_id]
+        except Exception as e:
+            print(e, "tryed to add userID to user history")
+        finally:
+            agent.df_lock.release()
     
     try:
         s_t = timer()
