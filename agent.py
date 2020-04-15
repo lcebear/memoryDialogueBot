@@ -574,7 +574,7 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
     #print(agent_output)
     return agent_output
     
-def generate_reply(user_question, num_answers=20):
+def generate_reply(user_question, num_answers=8):
     ret_num = 0
     #adding question mark if sentence doesn't have it
     temp = ""
