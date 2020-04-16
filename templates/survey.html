@@ -11,14 +11,28 @@
         MemoryDialogueBot
       </h1>
     </center>
-	<center>
+<div id="mainContent">
+<div>
 <form action="/end" method="post">
+
+<p>Age
+<input name ="age" required type="number"></input>
+</p>
+
+             <p>Estimated English proficiency
+             <select name="english" required id = "myList">
+			 <option value="" selected disabled hidden> </option>
+			   <option name="english" value = "5">Native speaker</option>
+               <option name="english" value = "4">Fluent, C1 - C2</option>
+               <option name="english" value = "3">Advanced, B2 - C1 </option>
+               <option name="english" value = "2">Intermediate, B1 - B2</option>
+               <option name="english" value = "1">Beginner, A1 - A2</option>
+             </select>
+			 </p>
+			 
 <p>Have you previously interacted with a chatbot?
 <input name ="previousChatbots" required type="radio" value="yes">Yes</input>
 <input name ="previousChatbots" required type="radio" value="no">No</input>
-</p>
-<p>Age
-<input name ="age" required type="number"></input>
 </p>
 	<div id="tableDiv">
 	<p>
@@ -131,11 +145,15 @@
 	<p>
 <textarea name="comment" rows="4" cols="50"></textarea>
 </p> -->
+<center>
 <p>
 <input type="submit"></input>
 </p>
-</form>
 </center>
+</form>
+</div>
+</div>
+
 
 </body>
 </html>

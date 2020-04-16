@@ -22,11 +22,14 @@ print(idvar)
 message_history = {}
 
 delay_threshhold = 8
+#stats
+unique_visits = 0
+num_completed = 0
 
 
 @app.route('/', )
 def about():
-    global user_test_frame
+    global user_test_frame, unique_visits
     print("Home- Session id:", session.get('userID'))
     
     session['maxDelay'] = 0
@@ -37,6 +40,7 @@ def about():
     else:
         data_lock.acquire()
         try:
+            unique_visits +=1
             global idvar
             idvar +=1
             session['userID'] = idvar
@@ -166,16 +170,19 @@ def survey():
         finally:
             ra.agent.df_lock.release()
  
-    return render_template('survey.html')
+        return render_template('survey.html')
+    else:
+        return redirect("/")
     
 @app.route('/end', methods=['GET', 'POST'])
 def finished_survey():
-    global user_survey_frame
+    global user_survey_frame, num_completed
     if request.method == 'POST':
     
         survey_dict ={
-        'previousChatbots' : request.form['previousChatbots'],
         'age' : request.form['age'],
+        'english-proficiency' : request.form['english'],
+        'previousChatbots' : request.form['previousChatbots'],
         'engagingness' : request.form['engagingness'],
         'unresponsiveness' : request.form['unresponsiveness'], 
         'realness' : request.form['realness'],
@@ -187,6 +194,7 @@ def finished_survey():
         'persona' : request.form['persona'] }
         data_lock.acquire()
         try:
+            num_completed +=1
             user_survey_frame = user_survey_frame.append({'userID' : session['userID'] , 'time' : session['userTime'],
             'survey' : survey_dict, 'delay' : session['delay'], 'max_delay' : session.get('maxDelay'), 'avg_delay' : session['avgDelay'] } , ignore_index=True)
             user_survey_frame.to_csv(r'data/user_test_survey.csv', index = False)
@@ -197,3 +205,6 @@ def finished_survey():
         #TODO save survey+messages+id+time
     return render_template('end.html')
 
+@app.route('/livestats')
+def check_stats():
+    return render_template('livestats.html', visits=unique_visits, completed=num_completed)

@@ -7,8 +7,8 @@ body {
 	  {
 		  background-color: rgb(70,70,70);
 		  width: 60%;
-		  height: 600px;
 		  margin: auto;
+		  border: 10px;
 	  }
       h1 {
         background-color: rgb(150,40,100);
@@ -29,6 +29,20 @@ body {
 		  
         font-family: monospace;
         font-size: 17px;
+	  }
+	  #consent-form{
+		font-family: monospace;
+		font-size: 15px;
+		text-align: left;
+		margin-left: 10px;
+		margin-right: 10px;
+	  }
+	  h3.h3-consent{
+		  font-family: monospace;
+		  color: white;
+		  text-align: left;
+		  margin-left: 10px;
+		  margin-right: 10px;
 	  }
 	  #chatOuter
 	  {
