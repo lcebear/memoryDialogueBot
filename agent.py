@@ -15,6 +15,7 @@ from timeit import default_timer as timer
 import threading 
 
 import gpt_2_simple as gpt2
+
 import atexit
 
 global gen_counter
@@ -22,6 +23,11 @@ gen_counter = 0
 
 #To avoid the generative model to crash due to simultanous or near simultaneous calls from different users
 my_lock = threading.Lock()
+
+m1_lock = threading.Lock()
+m2_lock = threading.Lock()
+m3_lock = threading.Lock()
+m4_lock = threading.Lock()
 
 #lock to be used when trying to save to dataframes/csv that is orignally loaded in this file
 df_lock = threading.Lock()
@@ -170,13 +176,46 @@ question_sentiment = "like" #default sentiment is to ask if you like something
 model_name = '124M'
 run_name ="run_10"
 
-sess = gpt2.start_tf_sess(threads=8)
 
+
+sess2 = gpt2.start_tf_sess(threads=8)
+global graph2
+graph2 = tf.compat.v1.get_default_graph()
+
+with graph2.as_default():
+    #tf.compat.v1.get_variable_scope().reuse_variables()
+    #with tf.compat.v1.variable_scope("m2"):
+    gpt2.load_gpt2(sess2, run_name="run_10_2", scope="m2")
+
+
+sess = gpt2.start_tf_sess(threads=8)
+sess = gpt2.reset_session(sess, threads=8)
 global graph
 graph = tf.compat.v1.get_default_graph()
 
 with graph.as_default():
+    
     gpt2.load_gpt2(sess, run_name=run_name)
+    
+
+sess3 = gpt2.start_tf_sess(threads=8)
+sess3 = gpt2.reset_session(sess3, threads=8)
+global graph3
+graph3 = tf.compat.v1.get_default_graph()
+
+with graph3.as_default():
+    
+    gpt2.load_gpt2(sess3, run_name="run_10_3", scope="m3")    
+
+#sess4 = gpt2.start_tf_sess(threads=8)
+#sess4 = gpt2.reset_session(sess4, threads=8)
+#global graph4
+#graph4 = tf.compat.v1.get_default_graph()
+
+#with graph4.as_default():
+    
+#    gpt2.load_gpt2(sess4, run_name="run_10_4", scope="m4")    
+
 
 
 
@@ -580,6 +619,7 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
     return agent_output
     
 def generate_reply(user_question, num_answers=8):
+    temp_gen_counter = 0
     ret_num = 0
     #adding question mark if sentence doesn't have it
     temp = ""
@@ -595,32 +635,112 @@ def generate_reply(user_question, num_answers=8):
     print("In generate_reply", user_question)
     text_input = "<|startoftext|>" + user_question
     #Before prediction
-    K.clear_session()
+    
     my_lock.acquire()
     #try:
     try:
         #print("acq lock", gen_counter)
         gen_counter = gen_counter + 1
+        temp_gen_counter = gen_counter
     finally:
         
-        time.sleep(1*gen_counter)
+        #time.sleep(1*gen_counter)
         #print("release lock")
         my_lock.release()
     while(True):
-        try: 
-            with graph.as_default():
-                gen_ans =gpt2.generate(sess,
-                              run_name=run_name,
-                              length=40,
-                              temperature=1,
-                              prefix=text_input,
-                              truncate="<|endoftext|>",
-                              include_prefix=False,
-                              nsamples=num_answers,
-                              batch_size=num_answers,
-                              top_p=0.9,
-                              return_as_list=True
-                              )
+        try:
+            if temp_gen_counter%4 == 0:
+                m4_lock.acquire()
+                try:
+                    with graph4.as_default():
+                        gen_ans =gpt2.generate(sess,
+                                      run_name="run_10_4",
+                                      length=40,
+                                      temperature=1,
+                                      prefix=text_input,
+                                      truncate="<|endoftext|>",
+                                      include_prefix=False,
+                                      nsamples=num_answers,
+                                      batch_size=num_answers,
+                                      top_p=0.9,
+                                      return_as_list=True,
+                                      scope="m4"
+                                      )
+                except Exception as e4:
+                    print(e4, "model 4")
+                finally:
+                    m4_lock.release()
+                    print("model 4")
+
+            if temp_gen_counter%3 == 0:
+                m3_lock.acquire()
+                try:
+                    with graph3.as_default():
+                        gen_ans =gpt2.generate(sess,
+                                      run_name="run_10_3",
+                                      length=40,
+                                      temperature=1,
+                                      prefix=text_input,
+                                      truncate="<|endoftext|>",
+                                      include_prefix=False,
+                                      nsamples=num_answers,
+                                      batch_size=num_answers,
+                                      top_p=0.9,
+                                      return_as_list=True,
+                                      scope="m3"
+                                      )
+                except Exception as e3:
+                    print(e3, "model 3")
+                finally:
+                    m3_lock.release()
+                    print("model 3")
+                        
+
+            if temp_gen_counter%2 == 0:
+                m1_lock.acquire()
+                try:
+                    with graph.as_default():
+                        gen_ans =gpt2.generate(sess,
+                                      run_name=run_name,
+                                      length=40,
+                                      temperature=1,
+                                      prefix=text_input,
+                                      truncate="<|endoftext|>",
+                                      include_prefix=False,
+                                      nsamples=num_answers,
+                                      batch_size=num_answers,
+                                      top_p=0.9,
+                                      return_as_list=True
+                                      )
+                except Exception as e1:
+                    print(e1, "model 1")
+                finally:
+                    m1_lock.release()
+                    print("model 1")
+                
+            else:
+                m2_lock.acquire()
+                try:
+                    with graph2.as_default():
+                        gen_ans =gpt2.generate(sess2,
+                                      run_name="run_10_2",
+                                      length=40,
+                                      temperature=1,
+                                      prefix=text_input,
+                                      truncate="<|endoftext|>",
+                                      include_prefix=False,
+                                      nsamples=num_answers,
+                                      batch_size=num_answers,
+                                      top_p=0.9,
+                                      return_as_list=True,
+                                      scope="m2"
+                                      )
+                except Exception as e2:
+                    print(e2, "model 2")
+                finally:
+                    m2_lock.release()
+                    print("model 2")
+                
             ret_num = 0
             #Trying to prevent empty reply
             for i in range(num_answers-1):
@@ -632,7 +752,7 @@ def generate_reply(user_question, num_answers=8):
             print(gen_ans[ret_num])
             break
         except Exception as e:
-            print("Tensorflow thread error: Called gen in parallel", e, ret_num, gen_ans)#, threading.get_ident(), threading.enumerate())
+            print("Tensorflow thread error: Called gen in parallel", e)#, ret_num, gen_ans)#, threading.get_ident(), threading.enumerate())
             
             time.sleep(0.5)
     #finally:       
@@ -641,7 +761,9 @@ def generate_reply(user_question, num_answers=8):
     my_lock.acquire()
     try:
         #print("acq lock")
-        gen_counter = gen_counter - 1
+        if gen_counter > 1000:
+            gen_counter = 1
+        #gen_counter = gen_counter - 1
     finally:
         #print("release lock")
         my_lock.release()

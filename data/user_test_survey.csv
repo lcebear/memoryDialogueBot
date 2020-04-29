@@ -1,2 +1,4 @@
 avg_delay,delay,max_delay,survey,time,userID
 0.0,0.0,0.0,{},,0.0
+2.7674763200000085,1.0,5.8284583000000225,"{'age': '1', 'english-proficiency': '4', 'previousChatbots': 'yes', 'engagingness': '1', 'unresponsiveness': '1', 'realness': '1', 'inconsistency': '1', 'relevancy': '1', 'repetitiveness': '1', 'responsiveness': '1', 'retention': '1', 'persona': '1'}",2020-04-29 11:31:29,1.0
+3.223372850000009,1.0,5.8284583000000225,"{'age': '12', 'english-proficiency': '4', 'previousChatbots': 'yes', 'engagingness': '2', 'unresponsiveness': '2', 'realness': '3', 'inconsistency': '3', 'relevancy': '4', 'repetitiveness': '4', 'responsiveness': '4', 'retention': '4', 'persona': '4'}",2020-04-29 11:33:19,1.0

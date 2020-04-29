@@ -1,2 +1,4 @@
 message_history,true_sentiment,userID
 [],,0.0
+"[('What is your name', 'My name is Abigail.', 44), ('Where are you from?', 'I am from South Africa.', 46)]",[],1.0
+"[('What is your name?', 'My name is Margery.', 44)]",[],2.0
