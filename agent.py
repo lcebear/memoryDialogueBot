@@ -66,6 +66,11 @@ like_memory = pd.read_csv('data/sentiment_memory.csv')
 generated_kb = pd.read_csv('data/generated_answers_kb.csv')
 user_history = pd.read_csv('data/user_history.csv')
 
+
+#retrieval_a['optional_id'].fillna(0, inplace=True)
+
+
+
 #Convert 'string' to  list
 user_history['message_history'] = pd.eval(user_history['message_history'])
 
@@ -650,7 +655,7 @@ def preprocess_reply(input_text):
         replaced = temp_split[0]
         replaced = replaced.replace('<|', '')
     replaced = replaced.replace('<|endoftext|>', '')
-    replaced = replaced.replace('?', '?\n')
+    replaced = replaced.replace('?', '? ')
     text_sentences = nlp(replaced)
     temp_saved =""
     temp2 = ""
@@ -672,12 +677,22 @@ def preprocess_reply(input_text):
                     else:
                         temp_saved=""
                         temp2=""
-            
+
+    temp_saved = temp_saved.replace('<|', '')
+    temp_saved = temp_saved.replace('|>', '')
     text_sentences = sent_tokenize(temp_saved)
     final =""
     count = 0
+    #print(temp_saved)
+    #allow only up to two sentences in the reply.
     for sent in text_sentences:
         count +=1
+        #If the second sentence doesn't end with a punctuation or exclamation
+        #then perhaps the sentence was not fully generated and should be disregarded
+        if count == 2:
+            tokens = word_tokenize(sent)
+            if len(tokens) > 0 and (tokens[-1] != '.' and tokens[-1] != '!'):
+                break
         if count >2:
             break
         final = final + " " + sent

@@ -1,14 +1,2 @@
 message_history,true_sentiment,userID
-"[['the question', 'the answer', 0]]","[('topic', 'subject', 0)]",0.0
-"[['Hello', 'Greetings', 138], ['How are you?', ""I'm doing well."", 140], ['What is your name?', 'My name is William.', 44], ['How old are you?', 'I am just over 25.', 137], ['What are your hobbies?', 'I like to play sports.', 3], ['Bye', 'Bye', 139], ['Where are you from?', 'I live in the southern part of Ohio.', 46], ['What type of junk food do you like?', 'I like to eat pasta or rice with a side of fresh vegetables and eggs.', 60], ['What sports do you like to play?', 'I play football.', 91], ['Do you like football?', 'I did when I was in high school.', 77]]",[],56.0
-"[['What is your name?', 'My name is Keith.', 44], ['How old are you?', 'I am just over 25.', 137], ['Where are you from?', ""I'm from the UK."", 46], ['What do you like to do on the weekend?', 'I normally work on the weekends, so my favorite thing to do at night is drink with friends.', 95], ['Are you real?', ""I'm not."", 133]]",[],57.0
-"[['What is your name?', ""I'm David."", 44], ['Where are you from?', ""I'm from the Caribbean."", 46], ['How old are you?', 'I am just over 25.', 137], ['What is your job?', ""I'm a nurse."", 31], ['Where do you work?', ""I'm a system administrator."", 38]]",[],61.0
-[],[],62.0
-"[['What kind of hobbies do you have?', ""I play baseball so that's my number one thing."", 3]]",[],63.0
-"[['Hello what is your name?', ""I'm David."", 61], ['hello where are you from?', ""I'm from the US."", 46], ['What do you like to do on the weekend?', 'I go to festivals and stuff like that.', 95]]",[],64.0
-"[['What are your hobbies?', ""I play baseball so that's my number one thing."", 3], ['How old are you?', 'I just turned 30.', 137], ['Where are you from?', ""I'm from the UK."", 46]]",[],67.0
-[],[],68.0
-[],[],69.0
-[],[],70.0
-"[('Where are you from?', 'I live in Alabama.', 46)]",[],71.0
-"[('What is your name?', 'My name is Keith.', 44)]",[],65.0
+[],,0.0
