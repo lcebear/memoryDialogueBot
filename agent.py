@@ -632,7 +632,7 @@ def generate_reply(user_question, num_answers=8):
             print(gen_ans[ret_num])
             break
         except Exception as e:
-            print("Tensorflow thread error: Called gen in parallel", e, ret_num, gen_ans)#, threading.get_ident(), threading.enumerate())
+            print("Tensorflow thread error: Called gen in parallel", e)#, ret_num, gen_ans)#, threading.get_ident(), threading.enumerate())
             
             time.sleep(0.5)
     #finally:       
