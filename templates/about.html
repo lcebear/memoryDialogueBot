@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+MemoryDialogueBot
+</title>
+<link rel="stylesheet" type="text/css" href="../static/styles.css">
+</head>
+<body>
+<center>
+<h1>MemoryDialogueBot </h1>
+</center>
+<div id="mainContent">
+<center>
+
+
+
+
+
+
+
+<p>
+<h2>Consent form and information</h2>
+
+
+<h3 class="h3-consent">Description</h3>
+
+<p id="consent-form">This research is part of a Master Thesis Project in the topic of memory-based conversational agents.
+The agent is developed to be a question answering component, answering self-disclosure type questions.
+This is part of a research study on how people interact with a ‘personal question answering’ chatbot.
+After the conversation you will be asked to answer a number of questions.
+The questions are about rating how you perceive the agent in terms of its natural-ness (human-like), engagingness, etc., on a 5-point scale.
+You will also be asked to fill in your age and your estimated English proficiency.
+<br><br>
+Your participation will take approximately 4-7 minutes.
+</p>
+<h3 class="h3-consent">Risks and benefits </h3>
+
+<p id="consent-form">
+All messages sent to the chatbot will be saved and may be used by the current or a future version of the system.
+The stored messages may be used to extend the existing question/answer retrieval database.
+Data given in the survey may be presented in a Master Thesis report & presentation.
+There is no discomfort involved in this study, nor any risks.
+We cannot and do not guarantee or promise that you will receive any benefits from this study.  
+</p>
+<h3 class="h3-consent">Requirements to participate </h3>
+<p id="consent-form">
+<b>You must be 18 years or older to participate.</b> <br>
+Basic conversational proficiency in the English language is desired. 
+</p>
+
+<h3 class="h3-consent">Participant's rights</h3>
+<p id="consent-form">
+Please understand your participation is voluntary and you have the right to withdraw your consent or discontinue participation at any time without giving any reasons.
+You have the right to refuse to answer particular questions.
+You have the right to refuse afterwards (within 24 hours) to allow your data to be used for the research.
+If you wish to discontinue your participation and have your data removed, <b>please remember your User ID: {{ session['userID'] }}.</b>
+</p>
+<p id="consent-form">
+
+All your data collected in this test:
+<ul>
+  <li id="consent-form">Is anonymous.</li>
+  <li id="consent-form">will be stored in such a way that unauthorized access will be minimized.</li>
+  <li id="consent-form">will not be disclosed to third parties. </li>
+</ul>
+
+</p>
+
+<h3 class="h3-consent">Contact information</h3>
+<p id="consent-form">
+
+<b>Further information or Withdrawal:</b>
+If you have any questions or wish to discontinue your participation and for your data to be removed, please contact me by <b>e-mail m.lundellvinkler@student.utwente.nl</b>.
+Remember to include your <b>User ID {{ session['userID'] }}</b> if you wish for your data to be removed.
+</p>
+
+<p id="consent-form">
+<b>Independent Contact:</b>  If you are not satisfied with how this study is being conducted, or if you have any concerns, complaints, or general questions about the research or your rights as a participant, please contact the Ethics Committee, Faculty of EEMCS, University of Twente, tel: 053 -489 6719, email ethics-comm-ewi@utwente.nl
+</p>
+
+
+<h3 class="h3-consent">Cookies</h3>
+<p id="consent-form">
+Cookies are only used to store necessary data for the chatbot system and user test to be able to run smoothly, such as your User ID and message history with the chatbot.
+</p>
+
+
+<h2>Instructions</h3>
+<p id="consent-form">
+ Please ask the agent at least 5 questions to try to get to know the agent, as if it was a real person. Please send complete sentences one at a time.  </p>
+<p id="consent-form">When to stop asking questions to the agent is decided by you.
+Afterwards, please fill in a short 10 question survey to finish the test. </p>
+
+<form action="/chat" method="post">
+<p><input type="checkbox" required name="terms"> <u>I have read and understood my rights, I agree to the terms and hereby confirm my consent.</u></p>
+<p><input type="submit" value="Continue"></p>
+</form>
+
+</center>
+</div>
+</body>
+</html>
