@@ -69,7 +69,7 @@ def answer_idf_score(in_answers):
 
 #Trying to avoid exact same answer twice in a row
 def similar_answer_removal(new_answers, old_ans):
-    
+    #print(new_answers)
     threshold = float(2/3)
     temp_answers = []
     try: 
@@ -102,6 +102,7 @@ def similar_answer_removal(new_answers, old_ans):
             else:
                 temp_answers.append(new_answers[i])
     except:
+        print("Exception happend in similar_answer_removal")
         temp_answers=new_answers
     finally:
         return temp_answers

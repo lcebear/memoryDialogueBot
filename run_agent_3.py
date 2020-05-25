@@ -8,6 +8,7 @@ print("retrieval component loaded")
 import generative_component as gen 
 
 import numpy as np 
+import pandas as pd
 import time
 from timeit import default_timer as timer
 
@@ -16,9 +17,10 @@ from nltk.tokenize import word_tokenize
 
 print("generative component loaded")
 
+class_history = pd.read_csv('data/classified_user_history.csv')
 
 #Threshold for similarity, if user input is below the thresholds, then generate an answer.
-retrieval_threshold = 0.85 #Below this threshhold, the question is generated isntead of retrieved.
+retrieval_threshold = 0.9 #Below this threshhold, the question is generated isntead of retrieved.
 likes_threshold = 0.9
 
 
@@ -39,7 +41,15 @@ user_msg_history = []
 using_generated = False
 likes_has_answer = False
 
+qlabel = 0
+past_qlabel = 0
+alabel = 0
+max_hist_msg = 4
+
+follow_up_q_labels = [3,9,10]
+history_less_labels = [11, 18, 20, 22, 24, 27, 29, 30, 33, 34, 36, 70, 100]
 while(1):
+    use_past_msg_pair = True
     answer = None
     answer_id = 0
     max_sim_val = 0
@@ -68,6 +78,12 @@ while(1):
     # Check if it is quit case
     if input_sentence == 'q' or input_sentence == 'quit': break
     start = timer()
+    
+    
+    ## classify question
+    qlabel = gen.cmn.classify_question(input_sentence)
+    desc = gen.cmn.question_labels[qlabel]
+
    
     
     #----------------------------------------------------------------
@@ -126,7 +142,7 @@ while(1):
     if type(qa_history_embedding) is not np.ndarray:
         with gen.cmn.g.as_default():
             qa_history_embedding = gen.cmn.sim_sess.run(gen.cmn.embedded_text, feed_dict={gen.cmn.text_input: [input_sentence]})
-
+    
     #process input to generative model
     question_string ="<|startoftext|>"+input_sentence
 
@@ -135,22 +151,53 @@ while(1):
     if nltk.tag.pos_tag([tokens[-1]])[0][1] != '.':
         question_string = question_string + "?"
     
-    hist = "<|startofhistory|>" + "<|endofhistory|>"
-    if len(msg_hist)>= num_hist_msg:
-        hist = "<|startofhistory|>"
-        for y in range(num_hist_msg):
-            x = num_hist_msg -y
-            hist += msg_hist[-x] +'\n'
-        hist += "<|endofhistory|>"
+    if using_generated:
+        #---------------
+        if qlabel in follow_up_q_labels:
+            qlabel = past_qlabel
+            use_past_msg_pair = False
+        # check if question class exist in history -> Pandas dataframe with question+answer+q_class,a_class
+        class_user_hist = class_history.loc[class_history['userID'] == user_id]
+        topic_user_hist = class_user_hist.loc[class_user_hist['qlabel'] == qlabel]
         
-    gen_input = hist + question_string
+        #input to history
+        len_topic_hist = len(topic_user_hist)
+        hist = "<|startofhistory|>"
+        if len_topic_hist > 0 and qlabel not in history_less_labels:
+            temp_count = 0
+            if len_topic_hist > max_hist_msg:
+                temp_index = len_topic_hist - max_hist_msg
+            else:
+                temp_index = 0
+            for i in range(len_topic_hist):
+                if temp_count >= max_hist_msg:
+                    break
+                temp_df = topic_user_hist.iloc[temp_index + i]
+                hist += "<|startoftext|>" + temp_df.question + " " + temp_df.answer + "<|endoftext|>\n"
+                #recalculate history embedding -> question -> answeer
+                qa_history_embedding = gen.update_history_embedding(qa_history_embedding, temp_df.question, alpha=0.2)
+                qa_history_embedding = gen.update_history_embedding(qa_history_embedding, temp_df.answer, alpha=0.2)
+                temp_count +=1
+        #Add previous question here then add end of history        
+        if len(msg_hist)>= num_hist_msg and use_past_msg_pair:
+            
+            for y in range(num_hist_msg):
+                x = num_hist_msg -y
+                hist += msg_hist[-x]# +'\n'
+            hist += "\n"
+        hist += "<|endofhistory|>"
+            
+        gen_input = hist + question_string
 
             
     #add question to history 
     msg_hist.append(question_string)
 
     #update history embedding -> Past answer embedding*0.2 + new question embedding*0.8
+    #if use_past_msg_pair:
     qa_history_embedding = gen.update_history_embedding(qa_history_embedding, input_sentence, alpha=0.2)
+    #else: #if it's a follow up question then use more weight of past messages than current question 
+    #    qa_history_embedding = gen.update_history_embedding(qa_history_embedding, input_sentence, alpha=0.4)
     
     if using_generated: 
     
@@ -170,12 +217,18 @@ while(1):
         print(answer, '\n')
         
     #update past answer, append to history  
-
+    alabel = gen.cmn.classify_answers([answer])[0]
     past_answer = answer
+    past_qlabel = qlabel
     answer_string = " " + answer + '<|endoftext|>'
     msg_hist.append(answer_string)
      
     qa_history_embedding = gen.update_history_embedding(qa_history_embedding, answer, alpha=0.2)
+    class_history = class_history.append({"question" : input_sentence, "answer" : answer,
+                                      "qlabel" : qlabel, "alabel" : alabel,
+                                      "desc" : desc ,"userID" : user_id} , ignore_index=True)
+    
+    
     end = timer()
     print(end - start)
         
