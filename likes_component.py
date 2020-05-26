@@ -22,8 +22,11 @@ template_q = pd.read_csv('data/question_templates.csv')
 template_a = pd.read_csv('data/answer_templates.csv')
 like_memory = pd.read_csv('data/sentiment_memory.csv')
 
-temp = np.random.random(len(like_memory))
-like_memory['sentiment'] = temp #randomize sentiment (randomize preference/persona)
+#You can randomize sentiment every time or have user specific sentiment
+#for last user test i'm commenting out the random sentiment
+#incase the agent needs to be restarted
+#temp = np.random.random(len(like_memory))
+#like_memory['sentiment'] = temp #randomize sentiment (randomize preference/persona)
 like_memory['lc_subject'] = np.nan #lowercase subject
 
 likes_question_l = []

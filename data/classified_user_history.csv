@@ -1,2 +1,66 @@
-alabel,answer,desc,qlabel,question,userID
-0.0,,,0.0,,0.0
+,Unnamed: 0,Unnamed: 0.1,Unnamed: 0.1.1,Unnamed: 0.1.1.1,Unnamed: 0.1.1.1.1,Unnamed: 0.1.1.1.1.1,Unnamed: 0.1.1.1.1.1.1,Unnamed: 0.1.1.1.1.1.1.1,Unnamed: 0.1.1.1.1.1.1.1.1,Unnamed: 0.1.1.1.1.1.1.1.1.1,Unnamed: 0.1.1.1.1.1.1.1.1.1.1,Unnamed: 0.1.1.1.1.1.1.1.1.1.1.1,alabel,answer,desc,qlabel,question,userID
+0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0.0,,0.0
+1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,34.0,My name is Sam.,What's your name?,15.0,What is your name?,1234.0
+2,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,31.0,I am 25.,How long...?,10.0,How old are you?,1234.0
+3,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,12.0,I'm a system administrator.,Job,4.0,What do you do for a living?,1234.0
+4,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,12.0,i'm a programmer.,Follow up question type,4.0,what do you adminster?,1234.0
+5,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,9.0,english.,Follow up question type,4.0,in what language?,1234.0
+6,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,19.0,"i am not a programmer, i use C++ and Javascript.",Job,4.0,which programming language?,1234.0
+7,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,,12.0,I told you previously. I'm a system administrator.,Job,4.0,what do you do for a living?,1234.0
+8,8.0,8.0,8.0,8.0,8.0,8.0,8.0,8.0,8.0,8.0,8.0,,34.0,My name is Sam.,What's your name?,15.0,What is your name?,1234.0
+9,9.0,9.0,9.0,9.0,9.0,9.0,9.0,9.0,9.0,9.0,9.0,,39.0,"No, I dislike program.",Job,4.0,Do you like to program?,1234.0
+10,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,,19.0,"Nope, I think I think I know how to program, but I need to be precise to find the one.",Student/studies,16.0,Do you like programming in c++?,1234.0
+11,11.0,11.0,11.0,11.0,11.0,11.0,11.0,11.0,11.0,11.0,11.0,,19.0,My dream job is to produce a digital medical device.,Student/studies,16.0,what is your dream job?,1234.0
+12,12.0,12.0,12.0,12.0,12.0,12.0,12.0,12.0,12.0,12.0,12.0,,9.0,"I'm fluent in Español (Spanish), French, German, Italian, Spanish, and Simplified Chinese.",Follow up question type,16.0,What languages do you speak?,1234.0
+13,13.0,13.0,13.0,13.0,13.0,13.0,13.0,13.0,13.0,13.0,13.0,,9.0,"I started learning Spanish around 17, was 18 when I started, but did not finish until 20.",Follow up question type,16.0,at what age did you start learning languages?,1234.0
+14,14.0,14.0,14.0,14.0,14.0,14.0,14.0,14.0,14.0,14.0,14.0,,31.0,I was just over 18.,How long...?,16.0,how old were you five years ago?,1234.0
+15,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,,31.0,No i think i age goes in at 30.,kids/married/pets/male/female,2.0,But i thought you are 25 years old?,1234.0
+16,16.0,16.0,16.0,16.0,16.0,16.0,16.0,16.0,16.0,16.0,16.0,,25.0,i have 3 dogs and a handful of chickens.,kids/married/pets/male/female,2.0,How many pets do you have?,1234.0
+17,17.0,17.0,17.0,17.0,17.0,17.0,17.0,17.0,17.0,17.0,,,25.0,i have 2 parakeets and 1 small lassie.,kids/married/pets/male/female,2.0,how many pets do you have?,1234.0
+18,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,,,25.0,parakeets are little birds with little wings.,kids/married/pets/male/female,2.0,what is a parakeet?,1234.0
+19,19.0,19.0,19.0,19.0,19.0,19.0,19.0,19.0,19.0,19.0,,,25.0,"Haha, I don't think they're cute at all.",'Awesome'/'cool',20.0,are they cute?,1234.0
+20,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,,,20.0,I love them.,kids/married/pets/male/female,2.0,do you love them anyway?,1234.0
+21,21.0,21.0,21.0,21.0,21.0,21.0,21.0,21.0,21.0,21.0,,,34.0,"My name is Meryl, and my favorite things are their names is Steve, Meryl is a combination of a and b.",What's your name?,15.0,what are their names?,1234.0
+22,22.0,22.0,22.0,22.0,22.0,22.0,22.0,22.0,22.0,,,,24.0,"Yes, I do!",Food/Drink,12.0,do you like apples?,1234.0
+23,23.0,23.0,23.0,23.0,23.0,23.0,23.0,,,,,,26.0,"Yes, I like apples.",Food/Drink,12.0,do you likes apples?,1234.0
+24,24.0,24.0,24.0,24.0,24.0,24.0,24.0,,,,,,18.0,"No, I don't like money but I like to play sports.",Job,4.0,do you like money?,1234.0
+25,25.0,25.0,25.0,25.0,25.0,25.0,25.0,,,,,,26.0,"Yes, I like bananas.",Food/Drink,12.0,do you like bananas?,1234.0
+26,26.0,26.0,26.0,26.0,26.0,26.0,26.0,,,,,,26.0,"I like pineapple, raspberry and kiwi.",Food/Drink,12.0,what fruits do you like?,1234.0
+27,27.0,27.0,27.0,27.0,27.0,27.0,27.0,,,,,,18.0,"I like hockey, golf and boxing.",sports/Games,8.0,what sports do you like?,1234.0
+28,28.0,28.0,28.0,28.0,28.0,28.0,28.0,,,,,,34.0,My least favorite color is white.,Follow up question type,9.0,what is youwhat is your least favorite color?,1234.0
+29,29.0,29.0,29.0,29.0,29.0,29.0,29.0,,,,,,25.0,Hm...I don't really like donkeys that much.,kids/married/pets/male/female,2.0,what do you think about donkeys?,1234.0
+30,30.0,30.0,30.0,30.0,30.0,30.0,30.0,,,,,,20.0,I like it!,sports/Games,8.0,what do you think about ravens?,1234.0
+31,31.0,31.0,31.0,31.0,31.0,31.0,31.0,,,,,,20.0,I like it!,Food/Drink,12.0,what do you think about pie?,1234.0
+32,32.0,32.0,32.0,32.0,32.0,32.0,,,,,,,34.0,My name is Madison.,What's your name?,15.0,what is your name jimbo?,1234.0
+33,33.0,33.0,33.0,33.0,33.0,33.0,,,,,,,12.0,"I think not, I think in LOVE. LOVE is so important to me as well, and I do believe in EVERYONE.",kids/married/pets/male/female,2.0,Do you believe in the power of love?,1234.0
+34,34.0,34.0,34.0,34.0,34.0,,,,,,,,3.0,"I would think that I might be an alien, I've been living in space for a long time, I guess.",Follow up question type,2.0,are you an alien?,1234.0
+35,35.0,35.0,35.0,35.0,35.0,,,,,,,,4.0,"Yes, I think we could do it, Its really a beautiful way to look at the universe.",Movies/series/reading,7.0,what do you think about terraforming mars?,1234.0
+36,36.0,36.0,36.0,36.0,36.0,,,,,,,,3.0,"I think we could look at life on land or in the water, as well, and maybe make some kind of dolphin research research.",kids/married/pets/male/female,2.0,What do you know about dolphins?,1234.0
+37,37.0,37.0,37.0,37.0,37.0,,,,,,,,34.0,I think I might have to ask his real name.,Follow up question type,7.0,who is bob saget?,1234.0
+38,38.0,38.0,38.0,38.0,38.0,,,,,,,,4.0,Yeah I've seen the stars.,Traveling,19.0,have you seen the stars?,1234.0
+39,39.0,39.0,39.0,39.0,39.0,,,,,,,,4.0,"Perhaps its meaning is not clear, perhaps we must ask him simple questions about how we live our lives.",hobbies/interests,0.0,do you know what the meaning of life is?,1234.0
+40,40.0,40.0,40.0,40.0,,,,,,,,,3.0,What would you do if you met an alient!,Follow up question type,0.0,what would you do if you met an alient?,1234.0
+41,41.0,41.0,41.0,41.0,,,,,,,,,35.0,"No, not really, this is a warm winter.",Weather,13.0,have you seen the stars on a summer night?,1234.0
+42,42.0,42.0,42.0,42.0,,,,,,,,,31.0,"No, I think we would all just have a smile and a chat.",hobbies/interests,0.0,what would you do if you met an alien?,1234.0
+43,43.0,43.0,43.0,43.0,,,,,,,,,4.0,Maybe over a billion times bigger than the Sun maybe some day we will all reach our billionth world temperature.,Follow up question type,0.0,do you know how large the universe is?,1234.0
+44,44.0,44.0,44.0,44.0,,,,,,,,,30.0,"My real life friend will come along and help, and we can talk, so you'll feel free to go along.",Good morning/ i'm good,70.0,chat about what?,1234.0
+45,45.0,45.0,45.0,45.0,,,,,,,,,4.0,Well I'm fairly intelligent.,And you? (reflect question),11.0,are you smart?,1234.0
+46,46.0,46.0,46.0,,,,,,,,,,37.0,Hm...I don't really like money that much.,Job,4.0,what do you think about money?,1234.0
+47,47.0,47.0,47.0,,,,,,,,,,37.0,I think about money more than anything.,Job,4.0,whwhat do you think about money?,1234.0
+48,48.0,48.0,48.0,,,,,,,,,,37.0,Hm...I don't really like money that much.,Job,4.0,what do you think about money?,1234.0
+49,49.0,49.0,49.0,,,,,,,,,,26.0,"I like all kinds of apple, but I like orange more than any other fruit.",Food/Drink,12.0,what do you think about apple cider?,1234.0
+50,50.0,50.0,50.0,,,,,,,,,,31.0,Hm...I don't really like abortion that much.,kids/married/pets/male/female,2.0,what do you think about abortion?,1234.0
+51,51.0,51.0,51.0,,,,,,,,,,10.0,Hmmm...,Follow up question type,2.0,why not?,1234.0
+52,52.0,52.0,,,,,,,,,,,37.0,Hm...I don't really like money that much.,Job,4.0,what do you think about money?,1234.0
+53,53.0,53.0,,,,,,,,,,,37.0,"No, I dislike money.",Job,4.0,do you love money?,1234.0
+54,54.0,54.0,,,,,,,,,,,24.0,"Yes, I do!",kids/married/pets/male/female,2.0,do you hate abortion?,1234.0
+55,55.0,,,,,,,,,,,,37.0,Hm...I don't really like money that much.,Job,4.0,what do you think about money?,1234.0
+56,56.0,,,,,,,,,,,,31.0,Hm...I don't really like abortion that much.,kids/married/pets/male/female,2.0,what do you think about abortion?,1234.0
+57,57.0,,,,,,,,,,,,26.0,I love  apples.,Movies/series/reading,7.0,what do you think about apples?,1234.0
+58,58.0,,,,,,,,,,,,18.0,I like  soccer.,sports/Games,8.0,what do you think about soccer?,1234.0
+59,59.0,,,,,,,,,,,,3.0,I think I like sheep the most.,kids/married/pets/male/female,2.0,what is your favorite animal?,1234.0
+60,60.0,,,,,,,,,,,,10.0,Hmmm...,Follow up question type,2.0,why?,1234.0
+61,61.0,,,,,,,,,,,,26.0,"I love sheep, and that's fine , I could grow any kind of meat or just pick any type of sheep around here, the type you pick is just fine.",hobbies/interests,0.0,Why do you like sheep the most?,1234.0
+62,,,,,,,,,,,,,37.0,Hm...I don't really like money that much.,Job,4.0,what do you think about money?,1234.0
+63,,,,,,,,,,,,,20.0,I like it!,Movies/series/reading,7.0,what do you think about apples?,1234.0
+64,,,,,,,,,,,,,26.0,I don't like oranges but I like apple.,Food/Drink,12.0,do you like oranges?,1234.0

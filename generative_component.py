@@ -11,25 +11,53 @@ import gpt_2_simple as gpt2
 
 import agent_commons as cmn
 
+import threading 
+#counter for queueing users into different generative models 
+global gen_counter
+gen_counter = 0
+
+model_1_lock = threading.Lock()
+model_2_lock = threading.Lock()
+model_3_lock = threading.Lock()
+model_4_lock = threading.Lock()
+counter_lock = threading.Lock()
+
 idf_weights_df = pd.read_csv('data/dataset_idf_weights.csv')
 idf_words = idf_weights_df.word.tolist()
 weight_mean = np.mean(idf_weights_df.idf_weights.tolist())
 
 
 model_name = '124M'
-run_name ="run_18_pc_history"
+#run_name ="run_18_pc_history"
 
-
+run_names = ["run_18_pc_history", "run_18_pc_history_2", "run_18_pc_history_3", "run_18_pc_history_4"]
+scopes = [ None, "m2", "m3", "m4"]
 #Load the generative model 
-sess = gpt2.start_tf_sess(threads=8)
+#sess = gpt2.start_tf_sess(threads=8)
 
-global graph
-graph = tf.compat.v1.get_default_graph()
+#global graph
+#graph = tf.compat.v1.get_default_graph()
 
-with graph.as_default():
-    gpt2.load_gpt2(sess, run_name=run_name)
+#with graph.as_default():
+#    gpt2.load_gpt2(sess, run_name=run_name)
+
+#Max 4 currently
+num_models = 1
+global graphs
+gen_sessions = [None] * num_models
+graphs = [None] * num_models
+for i in range(num_models):
     
+    #Load the generative model 
+    gen_sessions[i] = gpt2.start_tf_sess(threads=8)
+    #I don't remember why but reset is needed when loading >1 models 
+    gen_sessions[i] = gpt2.reset_session(gen_sessions[i], threads=8)
     
+    graphs[i] = tf.compat.v1.get_default_graph()
+    with graphs[i].as_default():
+        gpt2.load_gpt2(gen_sessions[i], run_name=run_names[i], scope=scopes[i])
+    
+     
 
 #Update a word embedding (encoded sentence) to be old_vector*alpha + new_vector+(1-alpha)
 def update_history_embedding(history_emb, new_entry, alpha=0.2):
@@ -281,15 +309,14 @@ def preprocess_reply(input_text):
             break
         final = final + " " + sent
     return final.strip()
-    
 
-# generate_reply(qa_history_embedding, user_question, question_label,q_past_lab, ans_past_lab,question, previous_answer=None, num_answers=8):
-def generate_reply(text_input, num_answers=8):
-    gen_ans =[]   
+
+def generate_model(text_input, num_answers=8, index=0):
+    gen_ans =[]
     try:
-        with graph.as_default():
-            gen_ans =gpt2.generate(sess,
-                          run_name=run_name,
+        with graphs[index].as_default():
+            gen_ans =gpt2.generate(gen_sessions[index],
+                          run_name=run_names[index],
                           length=40,
                           temperature=1,
                           prefix=text_input,
@@ -299,11 +326,67 @@ def generate_reply(text_input, num_answers=8):
                           batch_size=num_answers,
                           top_p=0.9,
                           return_as_list=True,
+                          scope=scopes[index]
                           )
     except Exception as e:
         print(e)
     
     return gen_ans
+
+# generate_reply(qa_history_embedding, user_question, question_label,q_past_lab, ans_past_lab,question, previous_answer=None, num_answers=8):
+def generate_reply(text_input, num_answers=8):
+    temp_gen_counter = 0
+    global gen_counter
+    
+    gen_ans =[]
+
+    counter_lock.acquire()
+    try:
+        #update shared counter
+        gen_counter = gen_counter + 1
+        #store a local counter
+        temp_gen_counter = gen_counter
+        #resets counter 
+        if gen_counter == num_models:
+            gen_counter = 0
+    finally:
+        counter_lock.release()
+    #TODO Check which model to acquire
+    #Only one model now, so acquire the lock for it
+    if temp_gen_counter == 1:
+        model_1_lock.acquire()
+        try:
+            gen_ans= generate_model(text_input, num_answers=num_answers, index=0)
+        finally:
+            print("Released model 1")
+            model_1_lock.release()
+    elif temp_gen_counter == 2:
+        model_2_lock.acquire()
+        try:
+            gen_ans= generate_model(text_input, num_answers=num_answers, index=1)
+        finally:
+            print("Released model 2")
+            model_2_lock.release()
+    elif temp_gen_counter == 3:
+        model_3_lock.acquire()
+        try:
+            gen_ans= generate_model(text_input, num_answers=num_answers, index=2)
+        finally:
+            print("Released model 3")
+            model_3_lock.release()
+    elif temp_gen_counter == 4:
+        model_4_lock.acquire()
+        try:
+            gen_ans= generate_model(text_input, num_answers=num_answers, index=3)
+        finally:
+            print("Released model 4")
+            model_4_lock.release()
+    
+    return gen_ans 
+    
+    
+
+
 
 
 #removes empty answers and answers who are too similar to previous answer, also preprocess answers.    

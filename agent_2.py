@@ -15,9 +15,29 @@ from timeit import default_timer as timer
 import nltk
 from nltk.tokenize import word_tokenize
 
+import atexit
+
 print("generative component loaded")
 
 class_history = pd.read_csv('data/classified_user_history.csv')
+
+import threading
+
+dataframe_lock = threading.Lock()
+
+def exit_handler():
+    print('My application is ending! Saving data')
+    class_history.to_csv('data/classified_user_history.csv')
+    retrieval.user_history.to_csv('data/user_history.csv')
+    likes.like_memory.to_csv('data/sentiment_memory.csv')
+    
+    #generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
+    #like_memory.to_csv(r'data/sentiment_memory.csv', index = False)
+
+atexit.register(exit_handler)
+
+
+
 
 #Threshold for similarity, if user input is below the thresholds, then generate an answer.
 retrieval_threshold = 0.9 #Below this threshhold, the question is generated isntead of retrieved.
@@ -67,17 +87,20 @@ def get_reply(input_sentence, user_id):
         using_generated = False
         likes_has_answer = False
         
-        #fetch the current user's entry from the dataframe if exist or add new entry
-        curr_user = retrieval.user_history.loc[retrieval.user_history['userID'] == user_id]
-        if len(curr_user) > 0:
-            if len(curr_user.message_history.iloc[0]) > 0:
-                user_msg_history = curr_user.message_history.iloc[0]        
-        else:
-            retrieval.user_history = retrieval.user_history.append({'userID' : user_id , 'message_history' : [], 'true_sentiment' : [] } , ignore_index=True)
-            print("Added ", user_id, "to user history")
+        dataframe_lock.acquire()
+        try:
+            #fetch the current user's entry from the dataframe if exist or add new entry
             curr_user = retrieval.user_history.loc[retrieval.user_history['userID'] == user_id]
-            
-            
+            if len(curr_user) > 0:
+                if len(curr_user.message_history.iloc[0]) > 0:
+                    user_msg_history = curr_user.message_history.iloc[0]        
+            else:
+                retrieval.user_history = retrieval.user_history.append({'userID' : user_id , 'message_history' : [], 'true_sentiment' : [] } , ignore_index=True)
+                print("Added ", user_id, "to user history")
+                curr_user = retrieval.user_history.loc[retrieval.user_history['userID'] == user_id]
+        finally:
+            dataframe_lock.release()
+
 
 
         
@@ -89,18 +112,29 @@ def get_reply(input_sentence, user_id):
        
         
         #----------------------------------------------------------------
-        #Getting answer from likes component
-        processed_text_input, user_noun, orig_noun, noun_topics  = likes.process_user_input(input_sentence)
-        if user_noun != None:
 
-            answer_id, max_sim_val = likes.find_question_template(processed_text_input)[0:2]
-            
-            answer, nouns, answer_sentiment = likes.fetch_answer_template(answer_id, user_noun, noun_topics)
-            if len(answer) >0:
-                answer = answer.sample().iloc[0]
-                likes_has_answer = True
-            else:
-                answer = None 
+        #here we ideally should use locks inside of likes component but 
+        #we assume that the calls to likes component is fast anyway < 0.15 sec
+        #therefore concurrent calls wont suffer (with low number of concurrent users) 
+        #start_likes = timer()
+        dataframe_lock.acquire()
+        try:
+            #Getting answer from likes component
+            processed_text_input, user_noun, orig_noun, noun_topics  = likes.process_user_input(input_sentence)
+            if user_noun != None:
+
+                answer_id, max_sim_val = likes.find_question_template(processed_text_input)[0:2]
+                
+                answer, nouns, answer_sentiment = likes.fetch_answer_template(answer_id, user_noun, noun_topics)
+                if len(answer) >0:
+                    answer = answer.sample().iloc[0]
+                    likes_has_answer = True
+                else:
+                    answer = None
+        finally:
+            dataframe_lock.release()
+        #end_likes = timer()
+        #print("Likes component took:", end_likes-start_likes)
         #----------------------------------------------------------------        
         #Getting answer from retrieval component 
         answer2, sim_val_2, answer_id_2, max_sim_q_2 = retrieval.find_question_n_answer_retrieval(input_sentence)
@@ -111,21 +145,25 @@ def get_reply(input_sentence, user_id):
         else:
             if sim_val_2 > max_sim_val: #if retrieval has higher similarity than likes component
                     if answer2 != None:
-                        #print(answer)
-                        answer = answer2
-                        max_sim_val = sim_val_2
-                        answer_id = answer_id_2
-                        previous_answer = retrieval.check_msg_history(user_msg_history, answer_id)
-                        if previous_answer != None:
-                            answer = previous_answer
-                        #update user_msg_history with new retrieved q and a
-                        else:
-                            if answer_id in retrieval.exception_qid:
-                                pass
+                        dataframe_lock.acquire()
+                        try:
+                            #print(answer)
+                            answer = answer2
+                            max_sim_val = sim_val_2
+                            answer_id = answer_id_2
+                            previous_answer = retrieval.check_msg_history(user_msg_history, answer_id)
+                            if previous_answer != None:
+                                answer = previous_answer
+                            #update user_msg_history with new retrieved q and a
                             else:
-                                user_msg_history.append((input_sentence, answer2, answer_id))
-                                #Todo, implement true_sentiment
-                                retrieval.user_history.at[curr_user.index.values[0], 'message_history'] = user_msg_history
+                                if answer_id in retrieval.exception_qid:
+                                    pass
+                                else:
+                                    user_msg_history.append((input_sentence, answer2, answer_id))
+                                    #Todo, implement true_sentiment
+                                    retrieval.user_history.at[curr_user.index.values[0], 'message_history'] = user_msg_history
+                        finally:
+                            dataframe_lock.release()
                     #Retrieval similarity is higher than likes similarity but no answer was found.
                     else:
                         using_generated = True
@@ -155,7 +193,11 @@ def get_reply(input_sentence, user_id):
         
         if using_generated:
             #---------------
-            class_user_hist = class_history.loc[class_history['userID'] == user_id]
+            dataframe_lock.acquire()
+            try:
+                class_user_hist = class_history.loc[class_history['userID'] == user_id]
+            finally:
+                dataframe_lock.release()
             len_user_hist = len(class_user_hist)
             if len_user_hist >0:
                 past_qlabel = class_user_hist.iloc[-1].qlabel
@@ -238,10 +280,13 @@ def get_reply(input_sentence, user_id):
         msg_hist.append(answer_string)
          
         qa_history_embedding = gen.update_history_embedding(qa_history_embedding, answer, alpha=0.2)
-        class_history = class_history.append({"question" : input_sentence, "answer" : answer,
-                                          "qlabel" : qlabel, "alabel" : alabel,
-                                          "desc" : desc ,"userID" : user_id} , ignore_index=True)
-        
+        dataframe_lock.acquire()
+        try:
+            class_history = class_history.append({"question" : input_sentence, "answer" : answer,
+                                              "qlabel" : qlabel, "alabel" : alabel,
+                                              "desc" : desc ,"userID" : user_id} , ignore_index=True)
+        finally:
+            dataframe_lock.release()
         
         end = timer()
         print(end - start)
@@ -250,7 +295,7 @@ def get_reply(input_sentence, user_id):
         print(e)
         error_msg = e
     finally:
-        return {"Error" : error_msg, "answer" : answer}
+        return {"error" : error_msg, "answer" : answer}
     #except Exception as e:
         #print(e, "Error: Encountered unknown word.")
 

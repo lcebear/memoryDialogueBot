@@ -11,7 +11,8 @@ import time
 import threading
 import json
 
-
+#The generative model seem to return answers within 5 seconds (but has also been observed to take longer)
+delay_threshold = 5 
 
 app = Flask(__name__) #An instance of class Flask will be our WSGI application.
 
@@ -26,13 +27,35 @@ def home():
 
 @app.route("/get_answer", methods=['POST'])
 def get_bot_response():
-    #gets dictionary 
-    req_data = request.get_json()
-    return_json = {"Error" : "Unable to access question answering component", "answer" : None}
-    if ("userID" in req_data) and ("data" in req_data):
-        return_json = agent.get_reply(req_data["data"], req_data["userID"])
-    
-    return return_json
+    start_t = timer()
+    try:
+        print(threading.currentThread().getName(), 'Starting')
+        #gets dictionary 
+        req_data = request.get_json()
+        return_json = {"Error" : "Unable to access question answering component", "answer" : None}
+        if ("userID" in req_data) and ("data" in req_data):
+            return_json = agent.get_reply(req_data["data"], req_data["userID"])
+        
+        if return_json["error"] == None:
+            answer = return_json['answer']
+            ans_split = answer.split()
+            
+            wps = 2 #240 wpm, absurdly fast typer, average is 40 wpm
+            calc = len(ans_split)/wps
+            #introducin delay mimics human behavior but too long delay may be disruptive even if it's realistic.
+            #therefore values above threshhold is suppressed using ln 
+            if calc > delay_threshold:
+                calc = delay_threshold + np.log(calc) - np.log(delay_threshold)
+            #Busy wait, thread is blocking and not letting other threads run (no concurrency support)
+            end_t = timer()
+            print("Took: ",end_t - start_t) # Time in seconds, e.g. 5.38091952400282
+            if (end_t-start_t) < calc:
+                print("Calc sec",calc)
+                time.sleep(calc - (end_t-start_t)) #sleep works because each call is a new thread 
+        print(threading.currentThread().getName(), 'ending')
+        return return_json
+    except Exception as e:
+        return {"error" : "Error occured in front-end of API", "answer" : None}
 
 
 # #----------------------------------------
