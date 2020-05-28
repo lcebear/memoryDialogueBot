@@ -21,6 +21,7 @@ import agent_commons as cmn
 template_q = pd.read_csv('data/question_templates.csv')
 template_a = pd.read_csv('data/answer_templates.csv')
 like_memory = pd.read_csv('data/sentiment_memory.csv')
+disclosure_df = pd.read_csv('data/disclosure_answer_templates.csv')
 
 #You can randomize sentiment every time or have user specific sentiment
 #for last user test i'm commenting out the random sentiment
@@ -246,25 +247,14 @@ def process_user_input(user_input):
     noun_topics = []
     max_match = None
     
-    #spacy tokens
     text = cmn.nlp(user_input)
     #Look through each token, look for nouns in the text
     for token in text:
         if token.text in sentiment_opt:
             question_sentiment = token.text
             sentiment_exist = True
-        #Nltk pos tag    
-        tag = nltk.pos_tag([token.text])
-        if token.pos_ == "NOUN" or tag[0][1] == "NN" or tag[0][1] == 'NNS':
-            #Enabling double noun words "Video games" "TV shows"
-            if prev_token != None:
-                temp_str = prev_token + " " + token.text
-                extracted_nouns.insert(0, (temp_str, temp_str)) #inserted first in the list
             
-            extracted_nouns.append((token.text, token.text))
-            extracted_nouns.append((token.lemma_, token.text))
-            extracted_nouns.append((pluralize(token.text), token.text))
-        prev_token = token.text if token.pos_ == "NOUN" else None #could be extended for nltk tag
+    extracted_nouns = cmn.extract_user_nouns(text)
      
     #go through the list of extracted nouns
     for n in extracted_nouns:
@@ -444,3 +434,103 @@ def process_agent_output(answer_template, noun, nouns, noun_topics, answer_senti
     agent_output = agent_output.replace(wildcards["agent_sentiment"], answer_sentiment)
     #print(agent_output)
     return agent_output
+    
+    
+    
+    
+#------------------Self disclosure component-------------------------------------
+def find_user_subject(user_input, question_topic):
+    global like_memory
+    user_input = user_input.lower()
+    user_input_sentiment = cmn.user_sentiment(user_input)
+    
+    text = cmn.nlp(user_input)
+    extracted_nouns = cmn.extract_user_nouns(text)
+    
+    orig_noun = None
+    noun = None
+    topic = None
+    #"translate" input topic from peilin 
+    translated_input_topic, _ = find_similar_noun(question_topic, topic_tokens)
+    translated_input_topic = translated_input_topic.lower()
+    #check if existing subject
+    for n in extracted_nouns:
+        if is_noun_existing_subject(n[0]): #checks if noun is in list of subjects
+            #get noun topic  
+            topic = like_memory.loc[like_memory['lc_subject'] == n[0]].topic.iloc[0]
+            topic = topic.lower()
+            if topic == translated_input_topic:
+                noun = n[0]
+                orig_noun = n[1]
+                break
+    #if not existing subject then check for similar subject
+    if noun == None:
+        #max_match = None
+        max_sim = 0
+        for n in extracted_nouns:
+            match, sim = find_similar_noun(n[0], subject_tokens)
+            if sim > max_sim:
+                
+                topic = like_memory.loc[like_memory['subject'] == match].topic.iloc[0]
+                topic = topic.lower()
+                #print(topic,translated_input_topic, n[0],"Match:", match)
+                if topic == translated_input_topic:
+                    #max_match = match
+                    max_sim = sim
+                    noun = n[0]
+                    orig_noun = n[1]
+                    
+        if noun != None:
+            like_memory = like_memory.append(
+                {'subject' : noun , 'topic' : topic, 'sentiment' : max_sim, 'lc_subject' : noun.lower()} ,
+                ignore_index=True)
+    return noun, orig_noun, user_input_sentiment, translated_input_topic
+
+
+def fetch_disclosure_template(user_subject, user_sentiment):
+    #Couldn't identify user input subject, if existed 
+    #Therefore Fetch template that says "I like <noun_1>" in the topic
+    global disclosure_df
+    fetch_df = None
+    subj_sent_text = None
+    if user_subject == None:
+        fetch_df = disclosure_df.loc[disclosure_df['answer_id'] == 2]
+    else:
+        subj_sent_val = fetch_subject_sentiment(user_subject)
+        subj_sent_text = sent_float_to_text(subj_sent_val)
+        same_sentiment = True
+        user_pos = True
+        # if user sentiment is positive
+        if user_sentiment > -0.05:
+            user_pos = True
+            fetch_df = disclosure_df.loc[disclosure_df['positive_user'] == user_pos]
+            if subj_sent_text in sentiment_opt_pos:
+                same_sentiment = True
+            else:
+                same_sentiment = False
+            fetch_df = fetch_df.loc[disclosure_df['same_sentiment'] == same_sentiment]
+        else:
+            user_pos = False
+            fetch_df = disclosure_df.loc[disclosure_df['positive_user'] == user_pos]
+    
+    return fetch_df, subj_sent_text
+
+          
+def disclosure_process_output(template, noun, topic, agent_subject_sentiment):
+    disclosure_output = template.answer
+    favorite_subjects = None
+    if template.fetch_count > 0:
+        favorite_subjects = topic_favorites[topic]
+    
+    #replace nouns
+    for i in range(1,template.fetch_count+1):
+        temp = "noun_"+str(i)
+        disclosure_output = disclosure_output.replace(wildcards[temp], favorite_subjects[i-1])
+    
+    if template.use_noun:
+        disclosure_output = disclosure_output.replace(wildcards["noun"], noun)
+    if agent_subject_sentiment != None:
+        disclosure_output = disclosure_output.replace(wildcards["agent_sentiment"], agent_subject_sentiment)
+    disclosure_output = disclosure_output.replace(wildcards["topic"], topic)
+    return disclosure_output   
+ 

@@ -6,6 +6,8 @@ import requests
 import spacy
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from pattern.en import pluralize, singularize
+
 
 #universal sentence encoder
 import tensorflow_hub as hub
@@ -52,9 +54,30 @@ def user_sentiment(sentence):
     ss = sid.polarity_scores(sentence)
     return ss['compound']
     
+#Input spacy tokens
+def extract_user_nouns(user_tokens):
+    prev_token = None 
+    temp_str =""
+    extracted_nouns = []
     
+    for token in user_tokens:
+        #Nltk pos tag    
+        tag = nltk.pos_tag([token.text])
+        if token.pos_ == "NOUN" or tag[0][1] == "NN" or tag[0][1] == 'NNS':
+            #Enabling double noun words "Video games" "TV shows"
+            if prev_token != None:
+                temp_str = prev_token + " " + token.text
+                extracted_nouns.insert(0, (temp_str, temp_str)) #inserted first in the list
+            
+            extracted_nouns.append((token.text, token.text))
+            extracted_nouns.append((token.lemma_, token.text))
+            extracted_nouns.append((pluralize(token.text), token.text))
+        prev_token = token.text if token.pos_ == "NOUN" else None #could be extended for nltk tag
+    return extracted_nouns
+
+ 
     
-    
+#----------------------------Classifier commons-----------------------------------    
 
 #load classifier model from disk
 loaded_knn_question = pickle.load(open(r'classifier/knn_question_classifier', 'rb'))
@@ -121,3 +144,4 @@ def print_answer_labels(ans,ans_labels):
         print("Answer:", ans[i], "Label:", answer_labels[ans_labels[i]], "ID:", ans_labels[i])
 
     
+#-----------------------------------------------------------------------

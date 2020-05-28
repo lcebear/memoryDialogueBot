@@ -59,7 +59,6 @@ def get_reply(input_sentence, user_id):
         #(TODO), store msg_hist and hist embedding in a csv with user_id as key
         #Not vital, as class_history keeps history and hist embedding can be remade from past msgs.
         qa_history_embedding = None
-        msg_hist = []
 
         past_answer = None
         past_qlabel = 0
@@ -245,10 +244,6 @@ def get_reply(input_sentence, user_id):
                 
             gen_input = hist + question_string
 
-                
-        #add question to history 
-        msg_hist.append(question_string)
-
         #update history embedding -> Past answer embedding*0.2 + new question embedding*0.8
         #if use_past_msg_pair:
         qa_history_embedding = gen.update_history_embedding(qa_history_embedding, input_sentence, alpha=0.2)
@@ -273,13 +268,7 @@ def get_reply(input_sentence, user_id):
             print(answer, '\n')
             
         #update past answer, append to history  
-        alabel = gen.cmn.classify_answers([answer])[0]
-        past_answer = answer
-        past_qlabel = qlabel
-        answer_string = " " + answer + '<|endoftext|>'
-        msg_hist.append(answer_string)
-         
-        qa_history_embedding = gen.update_history_embedding(qa_history_embedding, answer, alpha=0.2)
+        alabel = gen.cmn.classify_answers([answer])[0]         
         dataframe_lock.acquire()
         try:
             class_history = class_history.append({"question" : input_sentence, "answer" : answer,
@@ -293,11 +282,42 @@ def get_reply(input_sentence, user_id):
         
     except Exception as e:
         print(e)
-        error_msg = e
+        error_msg = str(e)
     finally:
         return {"error" : error_msg, "answer" : answer}
     #except Exception as e:
         #print(e, "Error: Encountered unknown word.")
 
-    
+def get_self_disclosure(input_sentence, user_id, question_topic):
+    global class_history
+    error_msg = None
+    answer = None
+    try:
+        qlabel = gen.cmn.classify_question(input_sentence)
+        desc = gen.cmn.question_labels[qlabel]
+        
+        #Call disclosure component in likes
+        #extract subject fom user input, get topic, user sentiment
+        noun, orig_noun, user_input_sentiment, translated_topic = likes.find_user_subject(input_sentence,question_topic)
+        
+        #Call function fetch self-disclosure from memory 
+        template, agent_subject_sentiment = likes.fetch_disclosure_template(noun, user_input_sentiment)
+        #process and get reply
+        if len(template) >0:
+            template = template.sample().iloc[0]
+        answer = likes.disclosure_process_output(template, orig_noun, translated_topic, agent_subject_sentiment)
+      
+        #append to history  
+        alabel = gen.cmn.classify_answers([answer])[0]  
+        dataframe_lock.acquire()
+        try:
+            class_history = class_history.append({"question" : input_sentence, "answer" : answer,
+                                              "qlabel" : qlabel, "alabel" : alabel,
+                                              "desc" : desc ,"userID" : user_id} , ignore_index=True)
+        finally:
+                dataframe_lock.release()
+    except Exception as e:
+        error_msg = str(e)
+    finally:
+        return {"error" : error_msg, "answer" : answer}
 

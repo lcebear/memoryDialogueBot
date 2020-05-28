@@ -57,7 +57,35 @@ def get_bot_response():
     except Exception as e:
         return {"error" : "Error occured in front-end of API", "answer" : None}
 
-
+@app.route("/get_disclosure", methods=['POST'])
+def get_bot_disclosure():
+    start_t = timer()
+    try:
+        #gets dictionary 
+        req_data = request.get_json()
+        return_json = {"Error" : "Unable to access self-disclosure component", "answer" : None}
+        if ("userID" in req_data) and ("data" in req_data) and ("topic" in req_data):
+            return_json = agent.get_self_disclosure(req_data["data"], req_data["userID"], req_data["topic"])
+            print(return_json)
+        if return_json["error"] == None:
+            answer = return_json['answer']
+            ans_split = answer.split()
+            
+            wps = 2 #240 wpm, absurdly fast typer, average is 40 wpm
+            calc = len(ans_split)/wps
+            #introducin delay mimics human behavior but too long delay may be disruptive even if it's realistic.
+            #therefore values above threshhold is suppressed using ln 
+            if calc > delay_threshold:
+                calc = delay_threshold + np.log(calc) - np.log(delay_threshold)
+            #Busy wait, thread is blocking and not letting other threads run (no concurrency support)
+            end_t = timer()
+            print("Took: ",end_t - start_t) # Time in seconds, e.g. 5.38091952400282
+            if (end_t-start_t) < calc:
+                print("Calc sec",calc)
+                time.sleep(calc - (end_t-start_t)) #sleep works because each call is a new thread 
+        return return_json
+    except Exception as e:
+        return {"error" : "Error occured in front-end of API", "answer" : None}
 # #----------------------------------------
 # global idvar 
 # idvar = 9999

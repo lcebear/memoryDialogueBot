@@ -1,0 +1,5 @@
+answer,answer_id,same_sentiment,fetch_count,negative_user,positive_user,use_noun
+"I like <noun> too, but I prefer <noun_1>.",1,1,1,0,1,1
+I also like <noun>!,1,1,0,0,1,1
+"I <sentiment_1> <noun>, but I like <noun_1>.",1,0,1,0,1,1
+I think my favorite <topic> is <noun_1>.,2,0,1,1,0,0
