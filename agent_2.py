@@ -27,9 +27,9 @@ dataframe_lock = threading.Lock()
 
 def exit_handler():
     print('My application is ending! Saving data')
-    class_history.to_csv('data/classified_user_history.csv')
-    retrieval.user_history.to_csv('data/user_history.csv')
-    likes.like_memory.to_csv('data/sentiment_memory.csv')
+    class_history.to_csv('data/classified_user_history.csv', index=False)
+    retrieval.user_history.to_csv('data/user_history.csv', index=False)
+    likes.like_memory.to_csv('data/sentiment_memory.csv', index=False)
     
     #generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
     #like_memory.to_csv(r'data/sentiment_memory.csv', index = False)
@@ -320,4 +320,33 @@ def get_self_disclosure(input_sentence, user_id, question_topic):
         error_msg = str(e)
     finally:
         return {"error" : error_msg, "answer" : answer}
+        
+        
+def get_disclose_and_reflect(past_user_utterance, user_id, new_topic):
+    global class_history
+    error_msg = None
+    answer = None
+    try:
+        qlabel = gen.cmn.classify_question(past_user_utterance)
+        desc = gen.cmn.question_labels[qlabel]
+        
+        #Give topic -> returns favorite in the topic + reflect question 
+        #One function call processing 
+        answer = likes.disclose_and_reflect(new_topic)
+
+        #append to history  
+        alabel = gen.cmn.classify_answers([answer])[0]  
+        dataframe_lock.acquire()
+        try:
+            class_history = class_history.append({"question" : past_user_utterance, "answer" : answer,
+                                              "qlabel" : qlabel, "alabel" : alabel,
+                                              "desc" : desc ,"userID" : user_id} , ignore_index=True)
+        finally:
+                dataframe_lock.release()
+    except Exception as e:
+        error_msg = str(e)
+    finally:
+        return {"error" : error_msg, "answer" : answer}
+        
+
 

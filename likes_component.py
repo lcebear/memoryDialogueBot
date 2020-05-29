@@ -22,12 +22,15 @@ template_q = pd.read_csv('data/question_templates.csv')
 template_a = pd.read_csv('data/answer_templates.csv')
 like_memory = pd.read_csv('data/sentiment_memory.csv')
 disclosure_df = pd.read_csv('data/disclosure_answer_templates.csv')
+disclose_reflect_df = pd.read_csv('data/disclosure_and_reflect_templates.csv')
 
 #You can randomize sentiment every time or have user specific sentiment
 #for last user test i'm commenting out the random sentiment
 #incase the agent needs to be restarted
 #temp = np.random.random(len(like_memory))
 #like_memory['sentiment'] = temp #randomize sentiment (randomize preference/persona)
+
+like_memory['sentiment'] = pd.to_numeric(like_memory['sentiment'])
 like_memory['lc_subject'] = np.nan #lowercase subject
 
 likes_question_l = []
@@ -85,7 +88,8 @@ sentiment_opt_neg = ["dislikes", "dislike", "hate", "hates"]
 sentiment_opt = sentiment_opt_pos + sentiment_opt_neg
 wildcards = {"noun": '<noun>', "sentiment":'<sentiment>', "topic" : "<topic>",
              "agent_sentiment" : '<sentiment_1>', "noun_1" : '<noun_1>', "noun_2" : '<noun_2>',
-             "noun_3" : '<noun_3>'}
+             "noun_3" : '<noun_3>', "sing_noun" : '<sing_noun>', "sing_topic" : '<sing_topic>',
+             "plural_noun" : '<plural_noun>', "plural_topic" : '<plural_topic>'}
 question_sentiment = None
 user_input_sentiment = None
 
@@ -305,7 +309,7 @@ def process_user_input(user_input):
                     noun_sent = np.random.random(1)
                     for topic in noun_topics:
                         like_memory = like_memory.append(
-                            {'subject' : noun , 'topic' : topic, 'sentiment' : noun_sent, 'lc_subject' : noun.lower()} ,
+                            {'subject' : noun , 'topic' : topic, 'sentiment' : noun_sent[0], 'lc_subject' : noun.lower()} ,
                             ignore_index=True)
         finally:
             #df_lock.release()
@@ -482,7 +486,7 @@ def find_user_subject(user_input, question_topic):
                     
         if noun != None:
             like_memory = like_memory.append(
-                {'subject' : noun , 'topic' : topic, 'sentiment' : max_sim, 'lc_subject' : noun.lower()} ,
+                {'subject' : noun , 'topic' : topic, 'sentiment' : max_sim[0], 'lc_subject' : noun.lower()} ,
                 ignore_index=True)
     return noun, orig_noun, user_input_sentiment, translated_input_topic
 
@@ -496,6 +500,7 @@ def fetch_disclosure_template(user_subject, user_sentiment):
     if user_subject == None:
         fetch_df = disclosure_df.loc[disclosure_df['answer_id'] == 2]
     else:
+        
         subj_sent_val = fetch_subject_sentiment(user_subject)
         subj_sent_text = sent_float_to_text(subj_sent_val)
         same_sentiment = True
@@ -533,4 +538,31 @@ def disclosure_process_output(template, noun, topic, agent_subject_sentiment):
         disclosure_output = disclosure_output.replace(wildcards["agent_sentiment"], agent_subject_sentiment)
     disclosure_output = disclosure_output.replace(wildcards["topic"], topic)
     return disclosure_output   
- 
+
+#---------------------Disclose and reflect component----------------
+def disclose_and_reflect(topic):
+    translated_input_topic, _ = find_similar_noun(topic, topic_tokens)
+    tr_in_topic = translated_input_topic.lower()
+    #fetch random template 
+    agent_reply = disclose_reflect_df.sample().iloc[0].reply
+    
+    #get favorite noun in topic 
+    fav_subj = topic_favorites[tr_in_topic][0]
+    
+    fav_sing = fav_subj
+    fav_plural = fav_subj 
+    topic_sing = singularize(tr_in_topic)
+    topic_plural = pluralize(tr_in_topic)
+    #hard coded if topic = animal -> pluralize noun 
+    if tr_in_topic == "animal":
+        fav_sing = singularize(fav_subj)
+    
+    agent_reply = agent_reply.replace(wildcards["sing_noun"], fav_sing)
+    agent_reply = agent_reply.replace(wildcards["plural_noun"], fav_plural)
+    agent_reply = agent_reply.replace(wildcards["sing_topic"], topic_sing)
+    agent_reply = agent_reply.replace(wildcards["plural_topic"], topic_plural)
+    
+    return agent_reply
+
+    
+    
