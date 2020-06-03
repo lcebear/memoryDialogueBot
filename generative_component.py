@@ -3,6 +3,9 @@ from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords 
 
+import time
+from timeit import default_timer as timer
+
 import numpy as np
 import pandas as pd
 
@@ -15,6 +18,8 @@ import threading
 #counter for queueing users into different generative models 
 global gen_counter
 gen_counter = 0
+
+
 
 model_1_lock = threading.Lock()
 model_2_lock = threading.Lock()
@@ -43,6 +48,9 @@ scopes = [ None, "m2", "m3", "m4"]
 
 #Max 4 currently
 num_models = 1
+global gen_msgs_counter
+gen_msgs_counter = [0] * num_models
+
 global graphs
 gen_sessions = [None] * num_models
 graphs = [None] * num_models
@@ -57,7 +65,16 @@ for i in range(num_models):
     with graphs[i].as_default():
         gpt2.load_gpt2(gen_sessions[i], run_name=run_names[i], scope=scopes[i])
     
-     
+ 
+def reset_model(i):
+    start =timer()
+    gen_sessions[i] = gpt2.reset_session(gen_sessions[i], threads=8)
+    
+    graphs[i] = tf.compat.v1.get_default_graph()
+    with graphs[i].as_default():
+        gpt2.load_gpt2(gen_sessions[i], run_name=run_names[i], scope=scopes[i])
+    end = timer()
+    print("Reset took", end-start)
 
 #Update a word embedding (encoded sentence) to be old_vector*alpha + new_vector+(1-alpha)
 def update_history_embedding(history_emb, new_entry, alpha=0.2):
@@ -264,10 +281,17 @@ def answer_emb_similarity_score(history_emb, answers):
 def preprocess_reply(input_text):
 
     replaced = input_text.replace('<|startoftext|>', '')
+    
+    #If message contains history in output, split and keep second part
+    hist_split = replaced.split('endofhistory', maxsplit=1)
+    if len(hist_split) >1:
+        replaced = hist_split[1]
+    
+    #The answer part is before the <|endoftext|> token.
     temp_split = replaced.split('endoftext', maxsplit=1)
     if len(temp_split) >1:
         replaced = temp_split[0]
-        replaced = replaced.replace('<|', '')
+        
     replaced = replaced.replace('<|endoftext|>', '')
     replaced = replaced.replace('?', '? ')
     text_sentences = cmn.nlp(replaced)
@@ -289,7 +313,13 @@ def preprocess_reply(input_text):
                     else:
                         temp_saved=""
                         temp2=""
-
+    
+    #Final clean up of GPT-2 model training tokens, sanity check 
+    temp_saved = temp_saved.replace('startoftext', '')
+    temp_saved = temp_saved.replace('endoftext', '')
+    temp_saved = temp_saved.replace('startofhistory', '')
+    temp_saved = temp_saved.replace('endofhistory', '')
+    
     temp_saved = temp_saved.replace('<|', '')
     temp_saved = temp_saved.replace('|>', '')
     text_sentences = sent_tokenize(temp_saved)
@@ -310,7 +340,7 @@ def preprocess_reply(input_text):
         final = final + " " + sent
     return final.strip()
 
-
+#TODO remove seed after internal testing
 def generate_model(text_input, num_answers=8, index=0):
     gen_ans =[]
     try:
@@ -326,7 +356,7 @@ def generate_model(text_input, num_answers=8, index=0):
                           batch_size=num_answers,
                           top_p=0.9,
                           return_as_list=True,
-                          scope=scopes[index]
+                          scope=scopes[index],
                           )
     except Exception as e:
         print(e)
@@ -336,7 +366,7 @@ def generate_model(text_input, num_answers=8, index=0):
 # generate_reply(qa_history_embedding, user_question, question_label,q_past_lab, ans_past_lab,question, previous_answer=None, num_answers=8):
 def generate_reply(text_input, num_answers=8):
     temp_gen_counter = 0
-    global gen_counter
+    global gen_counter, gen_msgs_counter
     
     gen_ans =[]
 
@@ -344,11 +374,22 @@ def generate_reply(text_input, num_answers=8):
     try:
         #update shared counter
         gen_counter = gen_counter + 1
+        
         #store a local counter
         temp_gen_counter = gen_counter
+        
         #resets counter 
         if gen_counter == num_models:
             gen_counter = 0
+            
+        #reset_model(0)
+        gen_msgs_counter[temp_gen_counter-1] +=1
+        if gen_msgs_counter[temp_gen_counter-1] > 10: #>num msg before reset
+            reset_model(temp_gen_counter-1)
+            gen_msgs_counter[temp_gen_counter-1] = 0
+            
+        
+
     finally:
         counter_lock.release()
     #TODO Check which model to acquire

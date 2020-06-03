@@ -1,0 +1,14 @@
+tensorflow_gpu==1.15.0
+spacy==2.2.3
+gpt_2_simple==0.7.1
+pandas==1.0.1
+tqdm==4.43.0
+requests==2.23.0
+numpy==1.18.1
+tensorflow_hub==0.8.0
+Pattern==3.6
+Flask==1.1.1
+nltk==3.5
+protobuf==3.12.2
+scikit_learn==0.23.1
+tensorflow==2.2.0

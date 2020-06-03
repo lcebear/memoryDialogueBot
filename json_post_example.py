@@ -15,8 +15,12 @@ def call_api_self_disclosure(userID, data, topic):
 def call_api_self_disclosure_and_reflect(userID, data, topic):
     r = requests.post('http://127.0.0.1:5000/get_disclosure_and_reflect', json={"userID": userID, "data": data, "topic" :topic})
     return r
+    
+def call_api_get_question(userID, data):
+    r = requests.post('http://127.0.0.1:5000/get_question', json={"userID": userID, "data": data})
+    return r
 
-options = [ "1. Ask question", "2. Self disclosure", "3. Self disclosure and reflect"]
+options = [ "1. Ask question", "2. Self disclosure", "3. Self disclosure and reflect", "4. Get question"]
 while(1):
     try:
         for opt in options:
@@ -40,6 +44,11 @@ while(1):
             input_sentence = input('> ')
             topic = input('>topic: ')
             r = call_api_self_disclosure_and_reflect(1234, input_sentence, topic)
+            print(r.json())
+            print(r.json()["answer"])
+        if input_sentence == "4":
+            input_sentence = input('> ')
+            r = call_api_get_question(1234, input_sentence)
             print(r.json())
             print(r.json()["answer"])
         #with concurrent.futures.ThreadPoolExecutor() as executor:

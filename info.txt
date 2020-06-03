@@ -1,0 +1,15 @@
+create python library version requirements.txt by calling pipreqs path/to/project
+.
+.
+.
+Additional requirements - Downloading spacy modules, nltk stopwords, punkt, .., download 'universal sentence encoder' version 2
+
+---
+to run api
+>set FLASK_APP=agent_api
+>flask run
+
+.
+.
+.
+example api usage in "json_post_example.py"

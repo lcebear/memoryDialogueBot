@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 import requests
+import random
 
 #NLP
 import nltk
@@ -486,12 +487,12 @@ def find_user_subject(user_input, question_topic):
                     
         if noun != None:
             like_memory = like_memory.append(
-                {'subject' : noun , 'topic' : topic, 'sentiment' : max_sim[0], 'lc_subject' : noun.lower()} ,
+                {'subject' : noun , 'topic' : topic, 'sentiment' : max_sim, 'lc_subject' : noun.lower()} ,
                 ignore_index=True)
     return noun, orig_noun, user_input_sentiment, translated_input_topic
 
 
-def fetch_disclosure_template(user_subject, user_sentiment):
+def fetch_disclosure_template(user_subject, user_sentiment, translated_topic):
     #Couldn't identify user input subject, if existed 
     #Therefore Fetch template that says "I like <noun_1>" in the topic
     global disclosure_df
@@ -500,7 +501,6 @@ def fetch_disclosure_template(user_subject, user_sentiment):
     if user_subject == None:
         fetch_df = disclosure_df.loc[disclosure_df['answer_id'] == 2]
     else:
-        
         subj_sent_val = fetch_subject_sentiment(user_subject)
         subj_sent_text = sent_float_to_text(subj_sent_val)
         same_sentiment = True
@@ -511,12 +511,15 @@ def fetch_disclosure_template(user_subject, user_sentiment):
             fetch_df = disclosure_df.loc[disclosure_df['positive_user'] == user_pos]
             if subj_sent_text in sentiment_opt_pos:
                 same_sentiment = True
+                if user_subject == topic_favorites[translated_topic]:
+                    fetch_df = fetch_df.loc[fetch_df['answer_id'] == 3] 
             else:
                 same_sentiment = False
             fetch_df = fetch_df.loc[disclosure_df['same_sentiment'] == same_sentiment]
         else:
             user_pos = False
             fetch_df = disclosure_df.loc[disclosure_df['positive_user'] == user_pos]
+        
     
     return fetch_df, subj_sent_text
 
@@ -537,6 +540,10 @@ def disclosure_process_output(template, noun, topic, agent_subject_sentiment):
     if agent_subject_sentiment != None:
         disclosure_output = disclosure_output.replace(wildcards["agent_sentiment"], agent_subject_sentiment)
     disclosure_output = disclosure_output.replace(wildcards["topic"], topic)
+    #50% empty entries to avoid feeling of repetitiveness (same ACK template)
+    temp_acknowledge = [ "", "I see. ", "", "Alright. ", "Okay. ", "" ]
+    disclosure_output = temp_acknowledge[random.randint(0, len(temp_acknowledge )-1)] + disclosure_output 
+    
     return disclosure_output   
 
 #---------------------Disclose and reflect component----------------

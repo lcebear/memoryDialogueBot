@@ -101,3 +101,134 @@ alabel,answer,desc,qlabel,question,userID
 25.0,"No, I don't like gorillas.",kids/married/pets/male/female,2.0,do you like gorillas?,1234.0
 26.0,"No, I don't like seeds.",Follow up question type,9.0,do you like seeds?,1234.0
 3.0,"No, I dislike sand.",Follow up question type,9.0,do you like sand?,1234.0
+7.0,I'm...,What's your name?,15.0,Who are you?,1001.0
+6.0,"I love watching movies, mainly survival horror, but also some sci-fi as well.",Movies/series/reading,7.0,Do you like to watch movies?,1001.0
+7.0,Mostly I enjoy myself.,Follow up question type,7.0,Why?,1001.0
+6.0,I like Blade Runner 2049 and 1917.,Movies/series/reading,7.0,What movies do you like?,1001.0
+31.0,"No, I don't have a lot of friends.",kids/married/pets/male/female,2.0,Do you have any friends?,1001.0
+34.0,My best friend is Aubrey.,kids/married/pets/male/female,2.0,What is the name of your best friend?,1001.0
+18.0,I like to play sports.,hobbies/interests,0.0,What are your hobbies?,1001.0
+26.0,"I usually cook most meals with the vegetables, fruit, and some kind of meat.",Food/Drink,12.0,What do you usually cook?,1001.0
+16.0,"I like dance music, rock and metal.",music/instrument,17.0,What music do you like?,1001.0
+16.0,I like a lot of rappers.,music/instrument,17.0,Who is your favorite rapper?,1001.0
+25.0,"Yes, a baby geese and a guinea pig.",kids/married/pets/male/female,2.0,Do you have any pets?,1001.0
+34.0,Their names is george.,What's your name?,15.0,What are their names?,1001.0
+7.0,"No, I am not drunk.",And you? (reflect question),11.0,Are you drunk?,1002.0
+18.0,I tend to get together with other people.,hobbies/interests,0.0,What do you do at a party?,1002.0
+4.0,The meaning of the life is so far away from me that I don't know what to say.,hobbies/interests,0.0,What is the meaning of life?,1002.0
+4.0,"There's only one way to answer it, AND the answer is exactly WHAT you are answering.",Follow up question type,0.0,That's not a question!,1002.0
+34.0,My favorite colour is probably red or grey.,Follow up question type,9.0,What is your favorite colour,1002.0
+34.0,Black.,Follow up question type,9.0,Why?,1002.0
+12.0,"I'm Armand, I'm the Marketing Manager of Myron, LLC.",What's your name?,15.0,Who are you?,2001.0
+6.0,I love watching movies but I don't have a lot of free time as of late.,Movies/series/reading,7.0,Do you like to watch movies?,2001.0
+6.0,I do like to watch movies.,Follow up question type,7.0,Why?,2001.0
+6.0,I like Blade Runner 2049 the most! But I also like 1917.,Movies/series/reading,7.0,What movies do you like?,2001.0
+18.0,"I don't have a lot of friends, but I do have a lot of fans.",kids/married/pets/male/female,2.0,Do you have any friends?,2001.0
+34.0,My name is Mandy.,kids/married/pets/male/female,2.0,What is the name of your best friend?,2001.0
+0.0,"I like to bake, do a few different things, and I like to dance (even if I'm not able to do it due to a medical issue).",hobbies/interests,0.0,What are your hobbies?,2001.0
+26.0,"I cook a lot of different things, like pancakes, sausages, fajitas, stews, etc.",Food/Drink,12.0,What do you usually cook?,2001.0
+16.0,"I like dance music, rappers and rock.",music/instrument,17.0,What music do you like?,2001.0
+16.0,"YG started with jay-Z, my favorite artist is too.",music/instrument,17.0,Who is your favorite rapper?,2001.0
+25.0,"No, but my mom has three dogs.",kids/married/pets/male/female,2.0,Do you have any pets?,2001.0
+25.0,"Their names is Lola, her name is Rachel.",What's your name?,15.0,What are their names?,2001.0
+26.0,"I may not be very drunk, but I should not have been drinking.",And you? (reflect question),11.0,Are you drunk?,2002.0
+16.0,I make top layer parties.,hobbies/interests,0.0,What do you do at a party?,2002.0
+12.0,The purpose of the life is to feel good about something.,hobbies/interests,0.0,What is the meaning of life?,2002.0
+4.0,That's a question!,Follow up question type,0.0,That's not a question!,2002.0
+34.0,I like red the most.,Follow up question type,9.0,What is your favorite colour,2002.0
+34.0,"This is a random question I feel like answering honestly, you must like Red as well.",Follow up question type,9.0,Why?,2002.0
+34.0,My name is Keith.,What's your name?,15.0,what is your name?,2003.0
+3.0,I love tulips.,Follow up question type,15.0,"Hi Sarah, do you like tulips?",2003.0
+3.0,I love flower.,Follow up question type,15.0,do you like the flower tulip?,2003.0
+34.0,"If you like any type of flower, I can't decide which one you like best!",Follow up question type,15.0,what is your favorite flower?,2003.0
+26.0,"I think i eat mostly, haha.",Food/Drink,12.0,Do you eat food?,2003.0
+31.0,"Yes, I have a wife and 2 kids.",kids/married/pets/male/female,2.0,Do you have a family?,2003.0
+34.0,"My wife's real name is Kira, but my kids are grown.",What's your name?,15.0,what are their names?,2003.0
+7.0,I am not a human.,Follow up question type,15.0,Are you a human?,2003.0
+9.0,I think he's a flawed leader. He's self-interested in pursuit of personal gain.,Movies/series/reading,7.0,What do you think about Donal trump?,2004.0
+19.0,"Yes, we should start thinking about how we raise the minimum wage, especially as more and more Americans are moving toward universal basic income.",Job,4.0,Do you think universal income should be a part of the future world economy?,2004.0
+4.0,I think it is because people will change.,Follow up question type,4.0,For what reasons do you think it will be very good?,2004.0
+35.0,"Nope, its going to snow.",Weather,13.0,Is it going to rain tomorrow?,2005.0
+12.0,"Nope, I'm a machine.",And you? (reflect question),11.0,Are you a human=,2005.0
+7.0,I'm terrible.,Follow up question type,11.0,why?,2005.0
+0.0,You are wearing a bra.,Follow up question type,11.0,Why are your legs apart?,2005.0
+24.0,"Yeah, pretty much anything.",Follow up question type,11.0,What kinds of things?,2005.0
+3.0,"Yeah, mostly a beach.",kids/married/pets/male/female,2.0,Watersports?,2005.0
+7.0, I'm doing just fine.,How are you?,14.0,"Hi, how are you?",2006.0
+19.0,I like all kinds of math.,Student/studies,16.0,What do you think of mathematics?,2006.0
+31.0,I'm 20.,How long...?,10.0,How old are you?,2006.0
+34.0, no . i do not know who you are . tell me about yourself<PC>,What's your name?,15.0,Who are you?,8001.0
+6.0,I thought I told you already. I love watching movies.,Movies/series/reading,7.0,Do you like to watch movies?,8001.0
+10.0, why not . .<PC>,Follow up question type,7.0,Why?,8001.0
+6.0,I like Blade Runner 2049 and 1917.,Movies/series/reading,7.0,What movies do you like?,8001.0
+7.0,I told you before. I have lots of friends.,kids/married/pets/male/female,2.0,Do you have any friends?,8001.0
+16.0, who is your best friend<PC>,kids/married/pets/male/female,2.0,What is the name of your best friend?,8001.0
+26.0,I told you previously. I love to watch movies and I cook.,hobbies/interests,0.0,What are your hobbies?,8001.0
+26.0,"A lot of eggs, lots of sausage.",Food/Drink,12.0,What do you usually cook?,8001.0
+16.0,"I like dance music, rock and metal.",music/instrument,17.0,What music do you like?,8001.0
+16.0," i m good . listening to rap music , currently drake who is my favorite .<PC>",music/instrument,17.0,Who is your favorite rapper?,8001.0
+25.0,Yeah i have 3 dogs,kids/married/pets/male/female,2.0,Do you have any pets?,8001.0
+25.0, great ! i hat two cats . john and wayne are their names .<PC>,What's your name?,15.0,What are their names?,8001.0
+7.0," wow , are you . . .<PC>",And you? (reflect question),11.0,Are you drunk?,8002.0
+18.0, i want to party soon when i party i party !<PC>,hobbies/interests,0.0,What do you do at a party?,8002.0
+4.0,"I want to live a life full of meaning, full of purpose, full of purpose.<GEN>",hobbies/interests,0.0,What is the meaning of life?,8002.0
+4.0, that is not a question i'll answer .<PC>,Follow up question type,0.0,That's not a question!,8002.0
+34.0,I think I like red the most.,Follow up question type,9.0,What is your favorite colour,8002.0
+34.0,My name is Marcus.,What's your name?,15.0,what is your name?,8003.0
+34.0, hi nancy ! i'm melody . . .<PC>,Follow up question type,15.0,"Hi Sarah, do you like tulips?",8003.0
+3.0, daisies are my favorite flower .<PC>,Follow up question type,15.0,do you like the flower tulip?,8003.0
+26.0, whats your favorite flower<PC>,Follow up question type,15.0,what is your favorite flower?,8003.0
+26.0, both really do you eat food<PC>,Food/Drink,12.0,Do you eat food?,8003.0
+31.0,"I guess you forgot. Yes, I have a wife and 2 kids.",kids/married/pets/male/female,2.0,Do you have a family?,8003.0
+25.0, great ! i hat two cats . john and wayne are their names .<PC>,What's your name?,15.0,what are their names?,8003.0
+31.0, are you really a robot<PC>,Follow up question type,15.0,Are you a human?,8003.0
+6.0," donald trump wasn't a good choice , he's the devil<PC>",Movies/series/reading,7.0,What do you think about Donal trump?,8004.0
+12.0," it can only improve our economy . its trickle up , not down .<PC>",Job,4.0,Do you think universal income should be a part of the future world economy?,8004.0
+9.0, why do you say that<PC>,Follow up question type,4.0,For what reasons do you think it will be very good?,8004.0
+35.0, is it a big humid it rained<PC>,Weather,13.0,Is it going to rain tomorrow?,8005.0
+7.0," wow , are you . . .<PC>",And you? (reflect question),11.0,Are you a human=,8005.0
+10.0, why not . .<PC>,Follow up question type,11.0,why?,8005.0
+0.0,"It's weird that my fingers are both held up straight , I don't understand how they are attached.<GEN>",Follow up question type,11.0,Why are your legs apart?,8005.0
+25.0,"Okay. I dislike pussy, but I like sheep.",kids/married/pets/male/female,2.0,I like pussy,1234.0
+26.0,I like food too!,Food/Drink,12.0,I like american food,1234.0
+18.0,I also like golf!,sports/Games,8.0,i like golf,1234.0
+26.0,What is your favorite food? My favorite has to be spring roll.,'Awesome'/'cool',20.0,That's cool.,1234.0
+34.0,Do you have a favorite color? Mine is red.,Food/Drink,12.0,Mine is broccoli,1234.0
+12.0,I'm a system administrator.,Job,4.0,what do you do for a living?,1234.0
+12.0,I'm currently looking for a new system administrator role.,Follow up question type,4.0,what type of system?,1234.0
+19.0,"I just got back from a weeklong hike, so I guess maybe into applying for a system administrator position soon.",hobbies/interests,0.0,What do you want to do in the new role?,1234.0
+34.0,I am Jack.,What's your name?,15.0,who are you?,1234.0
+31.0,"I've had two foster kids since I was a kid, and a boyfriend who thinks he's my sister.",My name is,34.0,What have you done to my sister?,1234.0
+31.0,"Because he's so unloving to my brother, and I find I'm always the last to see my brother.",kids/married/pets/male/female,2.0,Why does your boyfriend think that he is your sister?,1234.0
+22.0,That doesn't make any sense!,understandable/interesting,22.0,That doesn't make any sense!,1234.0
+34.0,I like red the most.,Follow up question type,9.0,What is your favorite color?,1234.0
+34.0,My least favorite color is blue.,Follow up question type,9.0,What is your least favorite color?,1234.0
+26.0,"Sometimes I like to think about bacon times a week, maybe more often then not, I like to think about vegetables too.",Food/Drink,12.0,How often do you think about bacon?,1234.0
+26.0,"I like vegetables all vegetables, but I like herbs more, but i am allergic to potatoes.",Follow up question type,12.0,which vegetables?,1234.0
+26.0,I eat potatoes because they are the only vegetables I have but don't like (I want to eat non-Vegetables too).,Food/Drink,12.0,what happens when you eat potatoes?,1234.0
+26.0,"Okay. If I have to choose a favorite fruit, I think I would have to choose apple.",Food/Drink,12.0,I like starbucks,1234.0
+26.0,Alright. My favorite food is spring roll.,Food/Drink,12.0,I like popcorn,1234.0
+26.0,Alright. I also like bacon!,Good morning/ i'm good,70.0,I like bacon,1234.0
+26.0,"What foods do you like? If I had to choose a favorite food, it would be spring roll.",kids/married/pets/male/female,2.0,I like cows,1234.0
+18.0,My favorite sport is soccer. What do you think about soccer?,Food/Drink,12.0,chicken,1234.0
+34.0,jack (can't remember who).,Follow up question type,12.0,who made you?,1234.0
+26.0,"No, I don't like cake.",Food/Drink,12.0,Do you like cake?,1234.0
+4.0,I don't feel like answering.,Follow up question type,12.0,Why not?,1234.0
+26.0,I also like cookies!,Good morning/ i'm good,70.0,I like cookies,1234.0
+26.0,My favorite food is spring roll. Do you also like spring roll?,'Awesome'/'cool',20.0,that's cool,1234.0
+4.0,"Yes, I've seen Twilight.",Movies/series/reading,7.0,Have you seen Twilight?,1234.0
+6.0,I loved the movie.,Follow up question type,7.0,What did you think?,1234.0
+24.0,"Not particularly, I guess.",Follow up question type,7.0,Have you seen anything else lately?,1234.0
+24.0,"You have to ask, I suppose.",Follow up question type,7.0,Why not?,1234.0
+25.0,do you prefer dogs or humans? I'm not very good at either.,No label,25.0,dog,1234.0
+25.0,"what are your dogs likes? Loves passionately, even if it means not getting enough information, just something that just doesn't feel like doing anything.",No label,25.0,I prefer humans,1234.0
+25.0,"Are you a dog person? No, not really.",No label,26.0,did you ever eat at mcdonalds?,1234.0
+3.0,"Do you do jamboree a lot? Nope, jamboree is my whole life.",No label,16.0,my favorite music is hip hop,1234.0
+26.0, What's your favorite type of dessert?,No label,26.0,I like to eat ice cream,1234.0
+30.0,What type of job do you do?,No label,26.0,It has to be ice cream,1234.0
+30.0,What sort of work do you do?,No label,12.0,i work as a consultant at a big tech company,1234.0
+2.0,"I do not know if i want to, I would rather live than live in a pile of dry land.",Traveling,19.0,What is one place you want to travel to before you die?,1234.0
+26.0,how do you feel about ramen?,No label,9.0,I would like to travel to Japan,1234.0
+30.0,So are you enjoying your vacation?,No label,26.0,I love ramen,1234.0
+6.0,I suppose that would be a nice side effect of being in love.,kids/married/pets/male/female,2.0,Have you ever been in love?,1234.0
+31.0,Do you miss him?,No label,31.0,I am not married.,1234.0

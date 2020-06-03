@@ -3,3 +3,7 @@ answer,answer_id,same_sentiment,fetch_count,negative_user,positive_user,use_noun
 I also like <noun>!,1,1,0,0,1,1
 "I <sentiment_1> <noun>, but I like <noun_1>.",1,0,1,0,1,1
 I think my favorite <topic> is <noun_1>.,2,0,1,1,0,0
+My favorite <topic> is <noun_1>.,2,0,1,1,0,0
+"If I have to choose a favorite <topic>, I think I would have to choose <noun_1>.",2,0,1,1,0,0
+I like <noun> too!,3,1,0,0,1,1
+I like <noun> too! It's my favorite <topic>.,3,1,0,0,1,1
