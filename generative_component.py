@@ -76,13 +76,14 @@ def reset_model(i):
     end = timer()
     print("Reset took", end-start)
 
+#LERP
 #Update a word embedding (encoded sentence) to be old_vector*alpha + new_vector+(1-alpha)
 def update_history_embedding(history_emb, new_entry, alpha=0.2):
     with cmn.g.as_default():
         result = cmn.sim_sess.run(cmn.embedded_text, feed_dict={cmn.text_input: [new_entry]})
         history_emb =  history_emb*alpha + result[0]*(1-alpha)
     return history_emb
-    
+    # new + (hist- new)*alpha
     
  #A normalize function to get values in range of 0 to 1
 def normalize_data(in_list):
@@ -101,15 +102,24 @@ def answer_idf_score(in_answers):
         temp_score = 0
         tokens = word_tokenize(ans)
         words =[word.lower() for word in tokens if word.isalpha()]
-        temp_lenght = 0
+        
+        #put together the list into a txt to make nlp faster
+        #than running nlp for each individual word
+        temp_s = ""
         for w in words:
-            if w in idf_words:
+            temp_s += w + " "
+        
+        spacy_words = cmn.nlp(temp_s)
+        temp_lenght = 0
+        for token in spacy_words:
+            if token.lemma_ in idf_words:
                 temp_lenght +=1
-                temp_score +=idf_weights_df.loc[idf_weights_df.word == w].iloc[0].idf_weights
+                temp_score +=idf_weights_df.loc[idf_weights_df.word == token.lemma_].iloc[0].idf_weights
         if(temp_lenght >0):   
             temp_score /=temp_lenght
         scores.append(temp_score)
     scores/=weight_mean
+    print(scores)
     return scores
 
 #Trying to avoid exact same answer twice in a row
@@ -181,13 +191,13 @@ def question_answer_shared_word_penalty(answers, question):
         data.append(words)
     #print(data)
     d_c_list = []
-    #for each answer...., find how many tokens are the same as previous answer
+    #for each answer...., find how many tokens are the same as question
     q_len = len(q_words)
     for i in range(len(data)):
         d_c_list.append(0)
         temp_set = set()
         len_data = len(data[i])
-        #for each token, check if token exists in previous answer
+        #for each token, check if token exists in question
         for j in range(len(data[i])):
             if data[i][j] in q_words:
                 if data[i][j] in temp_set:
@@ -226,7 +236,7 @@ def find_max_scored_answer(scores, answers):
 
 #given a score (similarit score), a penalty is given to the score based on the answer's length
 # % of penalty determined by "hyper"parameter beta
-def answer_lenght_penalty(scores, answers, ideal_tokens=20, beta=0.8):
+def answer_lenght_penalty_old(scores, answers, ideal_tokens=20, beta=0.8):
 
     norm_scores = normalize_data(scores)
     token_scores = []
@@ -277,7 +287,7 @@ def answer_emb_similarity_score(history_emb, answers):
         similarity_score.append(sim[0])
     return similarity_score
 
-#TODO needs to be updated
+#TODO (I realised, can't I just do a maxsplit at first question mark instead of replace question mark line
 def preprocess_reply(input_text):
 
     replaced = input_text.replace('<|startoftext|>', '')
