@@ -300,3 +300,212 @@ message_history,true_sentiment,userID
 [],[],8035.0
 [],[],test1@google.com
 [],[],None
+[],[],test2@google.com
+[],[],test3@google.com
+[],[],1234
+[],[],test4@google.com
+[],[],test5@google.com
+[],[],test6@google.com
+[],[],test7@google.com
+[],[],test12@google.com
+[],[],test9@google.com
+[],[],test8@google.com
+"[('Do you like to watch movies?', 'I love watching movies.', 17), ('Do you have any friends?', ""I don't have a lot of friends, but I do have a lot of fans."", 99), ('What are your hobbies?', ""I like to bake, do a few different things, and I like to dance (even if I'm not able to do it due to a medical issue)."", 3), ('What do you usually cook?', 'Different varieties of chicken, steak, and just meat in general.', 59), ('Do you have any pets?', 'Yeah i have 3 dogs and 2 cats.', 52)]",[],9001
+[],[],9002
+"[('what is your name?', 'My name is Margery.', 44), ('Do you have a family?', ""No, I don't have a family."", 47)]",[],9003
+[],[],9004
+[],[],9005
+"[('How old are you?', ""I'm 20."", 137)]",[],9006
+[],[],9007
+[],[],9009
+"[('Whats your name?', 'My Name is Ulrich.', 44)]",[],9011
+"[('Do you play any video games?', 'I do, mostly on my own.', 24)]",[],9013
+[],[],9014
+[],[],9015
+"[('What do you like to do on your freetime?', 'I like watching documentaries about great places and I like playing online especially on the PS4.', 2)]",[],9016
+[],[],9017
+"[('Which sports do you like?', 'I play football.', 91), ('Which music do you like?', 'I like all types of music, even classical music.', 5)]",[],9018
+[],[],9019
+[],[],9020
+"[(""What's your name?"", 'My name is Margery.', 44)]",[],9021
+[],[],9022
+[],[],9023
+[],[],9024
+[],[],9025
+"[('What is your favourite season?', 'Season-wise I like spring better.', 136)]",[],9026
+[],[],9027
+"[(""what's your name?"", 'My name is William.', 44)]",[],9028
+"[('Do you enjoy movies?', 'Yeah I watch a lot of movies.', 98)]",[],9029
+"[('How old are you?', 'I am just over 32 years.', 137)]",[],9030
+[],[],9031
+[],[],9033
+[],[],9034
+[],[],9035
+"[('Do you like to watch movies?', 'I love watching movies, mainly survival horror, but also some sci-fi as well.', 17), ('Do you have any friends?', 'I have lots of friends.', 99), ('What are your hobbies?', 'I like to ski, I like swimming and getting out in the open is super fun!', 3), ('What do you usually cook?', 'I like to cook a lot of different things, from muffins to wraps.', 59), ('Do you have any pets?', 'Yeah i have 3 dogs and 2 cats.', 52)]",[],10001
+[],[],10002
+"[('what is your name?', 'My Name is Sean.', 44), ('Do you have a family?', 'I have two kids.', 47)]",[],10003
+[],[],10004
+[],[],10005
+"[('How old are you?', ""I'm 20."", 137)]",[],10006
+[],[],10007
+[],[],10009
+"[('Whats your name?', 'My Name is Casca.', 44)]",[],10011
+"[('Do you play any video games?', ""I'm a gamer, so I do play games."", 24)]",[],10013
+[],[],10014
+[],[],10015
+"[('What do you like to do on your freetime?', 'My favorite things are watching movies, walking, fishing, playing video games.', 2)]",[],10016
+[],[],10017
+"[('Which sports do you like?', 'I play football.', 91), ('Which music do you like?', 'I like everything.', 5)]",[],10018
+[],[],10019
+[],[],10020
+"[(""What's your name?"", 'My name is Sam.', 44)]",[],10021
+[],[],10022
+[],[],10023
+[],[],10024
+[],[],10025
+"[('What is your favourite season?', 'Season-wise I like spring better.', 136)]",[],10026
+[],[],10027
+"[(""what's your name?"", 'My name is Abigail.', 44)]",[],10028
+"[('Do you enjoy movies?', ""I haven't really watched it much, but I do like it."", 98)]",[],10029
+"[('How old are you?', 'I just turned 30.', 137)]",[],10030
+[],[],10031
+[],[],10033
+[],[],10034
+[],[],10035
+"[('Do you like to watch movies?', ""I love watching movies but I don't have a lot of free time as of late."", 17), ('Do you have any friends?', 'Not really.', 99), ('What are your hobbies?', 'I like to cook, if you can call that a hobby and I like all types of craftwork', 3), ('What do you usually cook?', 'A lot of eggs, lots of sausage.', 59), ('Do you have any pets?', 'Yes, I have a Husky and a Beagle.', 52)]",[],11001
+[],[],11002
+"[('what is your name?', 'My name is Adonis.', 44), ('Do you have a family?', 'I have two kids.', 47)]",[],11003
+[],[],11004
+[],[],11005
+"[('How old are you?', 'I am just over 25.', 137)]",[],11006
+[],[],11007
+[],[],11009
+"[('Whats your name?', 'My name is Sam.', 44)]",[],11011
+"[('Do you play any video games?', ""Yeah, I've played EverQuest, World of Warcraft, and League of Legends."", 24)]",[],11013
+[],[],11014
+[],[],11015
+"[('What do you like to do on your freetime?', 'I like to gamble, exercise, and travel!', 2)]",[],11016
+[],[],11017
+"[('Which sports do you like?', 'I play football.', 91), ('Which music do you like?', 'I like all types of music, even classical music.', 5)]",[],11018
+[],[],11019
+[],[],11020
+"[(""What's your name?"", 'My name is Keith.', 44)]",[],11021
+[],[],11022
+[],[],11023
+[],[],11024
+[],[],11025
+"[('What is your favourite season?', 'I love the winter season.', 136)]",[],11026
+[],[],11027
+"[(""what's your name?"", 'My name is Abigail.', 44)]",[],11028
+"[('Do you enjoy movies?', ""I haven't really watched it much, but I do like it."", 98)]",[],11029
+"[('How old are you?', 'I just turned 30.', 137)]",[],11030
+[],[],11031
+[],[],11033
+[],[],11034
+[],[],11035
+"[('Do you like to watch movies?', 'I love watching movies, mainly survival horror, but also some sci-fi as well.', 17), ('Do you have any friends?', ""I don't have a lot of friends, but I do have a lot of fans."", 99), ('What are your hobbies?', 'I like biking, playing basketball, and reading.', 3), ('What do you usually cook?', 'I like to cook a lot of different things, from muffins to wraps.', 59), ('Do you have any pets?', 'Yes, a baby geese and a guinea pig.', 52)]",[],12001
+[],[],12002
+"[('what is your name?', 'My name is Marcus.', 44), ('Do you have a family?', 'Yes, I have a wife and 2 kids.', 47)]",[],12003
+[],[],12004
+[],[],12005
+"[('How old are you?', 'I am just over 25.', 137)]",[],12006
+[],[],12007
+[],[],12009
+"[('Whats your name?', 'My name is Paul.', 44)]",[],12011
+"[('Do you play any video games?', ""I do not play online games, although I have played several MMO's."", 24)]",[],12013
+[],[],12014
+[],[],12015
+"[('What do you like to do on your freetime?', 'I like to watch movies, travel, go surfing, play video games.', 2)]",[],12016
+[],[],12017
+"[('Which sports do you like?', 'I play football.', 91), ('Which music do you like?', 'I like everything.', 5)]",[],12018
+[],[],12019
+[],[],12020
+"[(""What's your name?"", 'My name is Hilario.', 44)]",[],12021
+[],[],12022
+[],[],12023
+[],[],12024
+[],[],12025
+"[('What is your favourite season?', 'Season-wise I like spring better.', 136)]",[],12026
+[],[],12027
+"[(""what's your name?"", 'My Name is Casca.', 44)]",[],12028
+"[('Do you enjoy movies?', ""I haven't really watched it much, but I do like it."", 98)]",[],12029
+"[('How old are you?', 'I am 25.', 137)]",[],12030
+[],[],12031
+[],[],12033
+[],[],12034
+[],[],12035
+[],[],sheep1@google.com
+[],[],sheep2@google.com
+[],[],sheep3@google.com
+[],[],sheep4@google.com
+[],[],sheep5@google.com
+[],[],sheep6@google.com
+[],[],sheep7@google.com
+[],[],sheep8@google.com
+[],[],sheep8@goohle.com
+[],[],sheep9@google.com
+[],[],sheep10@google.com
+[],[],sheep11@google.com
+"[('what do you do for fun?', 'My hobbies include biking and reading.', 2), ('What do you do for a living?', 'I work at a dairy near me.', 31), ('What are you studying?', 'I study Microbiology and Immunology.', 30), ('Where do you live?', ""I'm from the UK."", 46), ('Have you seen any good movies yet?', 'I saw The Social Network and Indiana Jones and the Last Crusade.', 18), ('do you have any pets?', 'Yep, I have a Retriever and my Dad has him.', 52), ('So are you a student or working?', 'I am working at a dry cleaners.', 26), ('Have you ever seen snow?', 'I have seen it, about 4 or 5 times already.', 121), ('Do you like to watch any sports?', 'I watch quite a bit.', 71), ('do you have any hobbies?', 'I like to ski, I like swimming, and I like playing video games too.', 3), ('Do you have children?', 'I have three.', 48), ('How old are your kids?', 'My daughter is 14 and my son is 7.', 50), (""How's your morning going?"", 'Really great.', 135), ('do you have a favorite kind of music you like to listen to?', 'I like a lot of genres, although I have been really into contemporary classical.', 5), ('Are you also in college?', 'I am currently attending college.', 101), ('what is your name?', 'My Name is Sean.', 44), ('what sport do you play?', 'I play football.', 91), (""What's your favorite thing to cook?"", 'I like to cook a lot of different things, from muffins to wraps.', 59), ('Did you ever leave the country before? ', 'yes i think i have seen more of the world than my own country.', 107)]",[],m18_test_run
+[],[],m18_test_run_2
+[],[],m19_test_run
+[],[],m20_test_run
+[],[],m21_test_run
+[],[],haldan@elitestreet.com
+[],[],56
+[],[],
+[],[],
+[],[],
+[],[],haldan@gmail.com
+[],[],star@google.xyz
+[],[],anemail@google.xyz
+[],[],sheep12@google.com
+[],[],sheep13@google.com
+[],[],sheep16@google.com
+[],[],
+[],[],sheep17@google.com
+[],[],1
+[],[],sheep33@google.com
+[],[],1234
+[],[],sheep22@google.se
+[],[],haldan@fakemail.com
+[],[],sheep23@google.com
+[],[],sheep24@google.com
+[],[],
+[],[],haldan@google.yea
+[],[],sheep29@google.com
+[],[],sheep30@google.com
+[],[],sheep31@google.com
+[],[],sheep34@google.com
+[],[],sheep37@google.com
+[],[],sheep39@google.com
+[],[],sheep40@google.com
+[],[],sheep42@google.com
+[],[],fakest@haldan.com
+[],[],
+[],[],haldan@ceo.google
+[],[],
+[],[],
+[],[],
+"[('do you have any animals?', 'No, but my mom has three dogs.', 52)]",[],sheep41@google.com
+[],[],
+[],[],
+[],[],email123@mail.com
+[],[],jimmy@google.ceo
+[],[],j.b.vanwaterschoot2@utwente.nl
+[],[],some@some.nl
+[],[],sheep43@google.com
+[],[],sheep44@google.com
+[],[],sheep45@google.com
+[],[],sheep46@google.com
+[],[],bighaldan@google.com
+[],[],
+[],[],
+[],[],
+[],[],dummy
+[],[],
+[],[],1234
+[],[],1234
+"[('What is your favorite genre of music?', 'I like a lot of genres, although I have been really into contemporary classical.', 5), ('What is your favorite food to cook?', 'Different varieties of chicken, steak, and just meat in general.', 59)]",[],1234
+[],[],1234
+[],[],1234

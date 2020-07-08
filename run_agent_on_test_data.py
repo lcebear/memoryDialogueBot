@@ -29,7 +29,7 @@ for i in range(len(log_data_df)):
         user_dialogue.append(temp_question_list)
 #-----------------------------
 #Counter to give each conversation a different id (due to how history is used per user)
-id_counter = 8000 #Either change this for each test run or clean history csvs
+id_counter = 12000 #Either change this for each test run or clean history csvs
 
 df = pd.DataFrame()
 
@@ -39,7 +39,7 @@ temp_dialogue = user_dialogue[0:2]
 for convo in user_dialogue:
     id_counter += 1
     print("New convo \n", id_counter)
-    if not len(convo) >0: #or len(convo)>100:
+    if not len(convo) >0 or len(convo)>100:
         continue 
     for i in range(len(convo)):
         answer = "ERROR"

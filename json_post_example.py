@@ -17,7 +17,7 @@ def call_api_self_disclosure_and_reflect(userID, data, topic):
     return r
     
 def call_api_get_question(userID, data):
-    r = requests.post('https://53a7498670eb.ngrok.io/get_question', json={"userID": userID, "data": data})
+    r = requests.post('http://127.0.0.1:5000/get_question', json={"userID": userID, "data": data})
     return r
 
 options = [ "1. Ask question", "2. Self disclosure", "3. Self disclosure and reflect", "4. Get question"]

@@ -29,13 +29,18 @@ def get_bot_response():
     try:
         #gets dictionary 
         req_data = request.get_json()
-        return_json = {"Error" : "Unable to access question answering component", "answer" : None}
+        print("JSON INPUT:", req_data)
+        return_json = {"Error" : "Unable to access question answering component", "answer" : None, "component" : None}
         if ("userID" in req_data) and ("data" in req_data):
+            #Don't allow empty messages 
+            if len(req_data["data"].strip()) < 1:
+                req_data["data"] = "Ok"
             return_json = agent.get_reply(req_data["data"], req_data["userID"])
         
-        
+        print("JSON OUTPUT:", return_json)
         return return_json
     except Exception as e:
+        print("Error occured in front-end of API for question answering")
         return {"error" : "Error occured in front-end of API", "answer" : None, "component" : None}
 
 @app.route("/get_disclosure", methods=['POST'])
@@ -43,13 +48,15 @@ def get_bot_disclosure():
     try:
         #gets dictionary 
         req_data = request.get_json()
+        print("JSON INPUT:", req_data)
         return_json = {"Error" : "Unable to access self-disclosure component", "answer" : None, "component" : None}
         if ("userID" in req_data) and ("data" in req_data) and ("topic" in req_data):
             return_json = agent.get_self_disclosure(req_data["data"], req_data["userID"], req_data["topic"])
-            print(return_json)
-            
+
+        print("JSON OUTPUT:", return_json)
         return return_json
     except Exception as e:
+        print("Error occured in front-end of API for self disclosure")
         return {"error" : "Error occured in front-end of API", "answer" : None, "component" : None}
         
 @app.route("/get_disclosure_and_reflect", methods=['POST'])
@@ -57,13 +64,15 @@ def get_bot_disclosure_and_reflect():
     try:
         #gets dictionary 
         req_data = request.get_json()
+        print("JSON INPUT:", req_data)
         return_json = {"Error" : "Unable to access disclosure component", "answer" : None, "component" : None}
         if ("userID" in req_data) and ("data" in req_data) and ("topic" in req_data):
             return_json = agent.get_disclose_and_reflect(req_data["data"], req_data["userID"], req_data["topic"])
-            print(return_json)
 
+        print("JSON OUTPUT:", return_json)
         return return_json
     except Exception as e:
+        print("Error occured in front-end of API for disclosure and reflect")
         return {"error" : "Error occured in front-end of API", "answer" : None, "component" : None}
 
 @app.route("/get_question", methods=['POST'])

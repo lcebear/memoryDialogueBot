@@ -83,7 +83,7 @@ def extract_user_nouns(user_tokens):
 #load classifier model from disk
 loaded_knn_question = pickle.load(open(r'classifier/knn_question_classifier', 'rb'))
 loaded_knn_answer = pickle.load(open(r'classifier/knn_answer_classifier', 'rb'))
-
+loaded_qna = pickle.load(open(r'classifier/knn_qna_classifier', 'rb'))
 
 question_labels = {0 : "hobbies/interests", 1 : "where are you from?",
                    2 : "kids/married/pets/male/female",
@@ -118,6 +118,12 @@ translate_dict = {0 : [18], 1 : [2,9], 2 : [25,31], 4 : [12,19], 7 : [6,4],
 #Translate question label to matching answer label, given question label, return possible answer labels
 #answer_labels = 
 #print(answer_labels[translate_dict[1][0]])
+def classify_qna(user_inp):
+
+    with g.as_default():
+        emb = sim_sess.run(embedded_text, feed_dict={text_input: [user_inp]})
+    pred = loaded_qna.predict(emb)
+    return pred[0]
 
 
 def classify_question(user_q):
@@ -144,5 +150,5 @@ def print_answer_labels(ans,ans_labels):
     for i in range(len(ans)):
         print("Answer:", ans[i], "Label:", answer_labels[ans_labels[i]], "ID:", ans_labels[i])
 
-    
+  
 #-----------------------------------------------------------------------

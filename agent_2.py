@@ -49,7 +49,7 @@ max_hist_msg = 4
 follow_up_q_labels = [3,9,10]
 history_less_labels = [11, 18, 20, 22, 24, 27, 29, 30, 33, 34, 36, 70, 100]
 
-def get_reply(input_sentence, user_id):
+def get_reply(input_sentence, user_id, only_generated=False):
     try:
         global class_history
         start = timer()
@@ -109,75 +109,77 @@ def get_reply(input_sentence, user_id):
         desc = gen.cmn.question_labels[qlabel]
 
        
-        
-        #----------------------------------------------------------------
+        if not only_generated:
+            #----------------------------------------------------------------
 
-        #here we ideally should use locks inside of likes component but 
-        #we assume that the calls to likes component is fast anyway < 0.15 sec
-        #therefore concurrent calls wont suffer (with low number of concurrent users) 
-        #start_likes = timer()
-        dataframe_lock.acquire()
-        try:
-            #Getting answer from likes component
-            processed_text_input, user_noun, orig_noun, noun_topics  = likes.process_user_input(input_sentence)
-            if user_noun != None:
+            #here we ideally should use locks inside of likes component but 
+            #we assume that the calls to likes component is fast anyway < 0.15 sec
+            #therefore concurrent calls wont suffer (with low number of concurrent users) 
+            #start_likes = timer()
+            dataframe_lock.acquire()
+            try:
+                #Getting answer from likes component
+                processed_text_input, user_noun, orig_noun, noun_topics  = likes.process_user_input(input_sentence)
+                if user_noun != None:
 
-                answer_id, max_sim_val = likes.find_question_template(processed_text_input)[0:2]
-                
-                answer, nouns, answer_sentiment = likes.fetch_answer_template(answer_id, user_noun, noun_topics)
-                if len(answer) >0:
-                    answer = answer.sample().iloc[0]
-                    likes_has_answer = True
-                else:
-                    answer = None
-        finally:
-            dataframe_lock.release()
-        #end_likes = timer()
-        #print("Likes component took:", end_likes-start_likes)
-        #----------------------------------------------------------------        
-        #Getting answer from retrieval component 
-        answer2, sim_val_2, answer_id_2, max_sim_q_2 = retrieval.find_question_n_answer_retrieval(input_sentence)
-        print(sim_val_2, max_sim_val) 
-        #if both likes and retrieval component are below threshold in similarity score, use generative model
-        if (sim_val_2 < retrieval_threshold) and (max_sim_val < likes_threshold):
-            using_generated = True
-        else:
-            if sim_val_2 > max_sim_val: #if retrieval has higher similarity than likes component
-                    if answer2 != None:
-                        dataframe_lock.acquire()
-                        try:
-                            component = "Retrieval"
-                            #print(answer)
-                            answer = answer2
-                            max_sim_val = sim_val_2
-                            answer_id = answer_id_2
-                            previous_answer = retrieval.check_msg_history(user_msg_history, answer_id)
-                            if previous_answer != None:
-                                answer = previous_answer
-                            #update user_msg_history with new retrieved q and a
-                            else:
-                                if answer_id in retrieval.exception_qid:
-                                    pass
-                                else:
-                                    user_msg_history.append((input_sentence, answer2, answer_id))
-                                    #Todo, implement true_sentiment
-                                    retrieval.user_history.at[curr_user.index.values[0], 'message_history'] = user_msg_history
-                        finally:
-                            dataframe_lock.release()
-                    #Retrieval similarity is higher than likes similarity but no answer was found.
+                    answer_id, max_sim_val = likes.find_question_template(processed_text_input)[0:2]
+                    
+                    answer, nouns, answer_sentiment = likes.fetch_answer_template(answer_id, user_noun, noun_topics)
+                    if len(answer) >0:
+                        answer = answer.sample().iloc[0]
+                        likes_has_answer = True
                     else:
-                        using_generated = True
-            #likes component has higher similarity than retrieval component 
-            elif likes_has_answer:
-                component = "Template"
-                answer = likes.process_agent_output(answer,
-                                             orig_noun, nouns,noun_topics, answer_sentiment)
-            #The likes/dislikes template cannot handle the user input, introduce generative model.    
-            else:
+                        answer = None
+            finally:
+                dataframe_lock.release()
+            #end_likes = timer()
+            #print("Likes component took:", end_likes-start_likes)
+            #----------------------------------------------------------------        
+            #Getting answer from retrieval component 
+            answer2, sim_val_2, answer_id_2, max_sim_q_2 = retrieval.find_question_n_answer_retrieval(input_sentence)
+            print(sim_val_2, max_sim_val) 
+            #if both likes and retrieval component are below threshold in similarity score, use generative model
+            if (sim_val_2 < retrieval_threshold) and (max_sim_val < likes_threshold):
                 using_generated = True
+            else:
+                if sim_val_2 > max_sim_val: #if retrieval has higher similarity than likes component
+                        if answer2 != None:
+                            dataframe_lock.acquire()
+                            try:
+                                component = "Retrieval"
+                                #print(answer)
+                                answer = answer2
+                                max_sim_val = sim_val_2
+                                answer_id = answer_id_2
+                                previous_answer = retrieval.check_msg_history(user_msg_history, answer_id)
+                                if previous_answer != None:
+                                    answer = previous_answer
+                                #update user_msg_history with new retrieved q and a
+                                else:
+                                    if answer_id in retrieval.exception_qid:
+                                        pass
+                                    else:
+                                        user_msg_history.append((input_sentence, answer2, answer_id))
+                                        #Todo, implement true_sentiment
+                                        retrieval.user_history.at[curr_user.index.values[0], 'message_history'] = user_msg_history
+                            finally:
+                                dataframe_lock.release()
+                        #Retrieval similarity is higher than likes similarity but no answer was found.
+                        else:
+                            using_generated = True
+                #likes component has higher similarity than retrieval component 
+                elif likes_has_answer:
+                    component = "Template"
+                    answer = likes.process_agent_output(answer,
+                                                 orig_noun, nouns,noun_topics, answer_sentiment)
+                #The likes/dislikes template cannot handle the user input, introduce generative model.    
+                else:
+                    using_generated = True
 
-            
-        #---------------------------------------------------------
+                
+            #---------------------------------------------------------
+        else: #If called to only use generative model (testing/model selection purposes)
+           using_generated = True  
             
         #Runs once, for the first sentence.
         if type(qa_history_embedding) is not np.ndarray:
