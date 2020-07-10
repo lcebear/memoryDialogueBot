@@ -1,3 +1,4 @@
+
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
@@ -14,9 +15,11 @@ import tensorflow as tf
 
 import agent_commons as cmn
 
-import threading 
+import threading
 
 import gpt2_specific_gen as gpt2
+
+
 #First generate seems slowest?
 #So generate once
 gpt2.generate(prefix="How are you?")
@@ -312,6 +315,7 @@ def preprocess_reply(input_text):
 # generate_reply(qa_history_embedding, user_question, question_label,q_past_lab, ans_past_lab,question, previous_answer=None, num_answers=8):
 def generate_reply(text_input, num_answers=8):
     gen_ans =[]
+        
     try:
         gen_ans = gpt2.generate(prefix=text_input)
     except Exception as e:

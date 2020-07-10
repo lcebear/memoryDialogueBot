@@ -283,12 +283,12 @@ def get_reply(input_sentence, user_id, only_generated=False):
         try:
             class_history = class_history.append({"question" : input_sentence, "answer" : answer,
                                               "qlabel" : qlabel, "alabel" : alabel,
-                                              "desc" : desc ,"userID" : user_id} , ignore_index=True)
+                                              "desc" : desc ,"userID" : user_id, "response" : timer()-start} , ignore_index=True)
         finally:
             dataframe_lock.release()
         
         end = timer()
-        print(end - start)
+        print("Total:", end - start)
         
     except Exception as e:
         print(e)
