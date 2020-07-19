@@ -11,6 +11,7 @@ The file 'json_post_example.py' illustrates how the agent can be called through 
 There is also an interactive version of the agent in file 'run_agent.py'.
 
 The latest trained GPT-2 generative model can be downloaded from: https://drive.google.com/open?id=1bamDAUSHM8ye6xzs51-hi9un03DwjOy5
+
 Trained classifiers can be downloaded here: https://drive.google.com/file/d/1coJjE3UL7feooR2x-g6zwedkUPGcKJQA/view?usp=sharing
 
 The project initially used the gpt_2_simple library, but due to concurrent generation problems
