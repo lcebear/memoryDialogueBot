@@ -25,8 +25,7 @@ g = tf.Graph()
 with g.as_default():
   # We will be feeding 1D tensors of text into the graph.
   text_input = tf.compat.v1.placeholder(dtype=tf.string, shape=[None])
-  # embed = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
-  embed =hub.Module(r"C:\Users\mik_l\Desktop\env\universal-sentence-encoder_2")
+  embed = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
   embedded_text = embed(text_input)
   init_op = tf.group([tf.compat.v1.global_variables_initializer(),
                       tf.compat.v1.tables_initializer()])
@@ -135,7 +134,7 @@ def classify_question(user_q):
         t_id = translate_dict[pred_q[0]]
     else:
         t_id = None
-    print(question_labels[pred_q[0]], pred_q[0], t_id)
+    #print(question_labels[pred_q[0]], pred_q[0], t_id)
     return pred_q[0]
         
 def classify_answers(agent_ans):

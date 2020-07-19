@@ -22,7 +22,8 @@ top_k=0
 top_p=0.9
 threads = 8
 
-models_dir = r"C:\Users\mik_l\Desktop\env\agent\checkpoint"#os.path.expanduser(os.path.expandvars(models_dir))
+models_dir = os.path.dirname(os.path.realpath(__file__)) + r"\checkpoint"
+#models_dir = os.path.expanduser(os.path.expandvars(models_dir))
 
 #start tf session
 config = tf.compat.v1.ConfigProto()

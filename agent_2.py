@@ -19,8 +19,6 @@ import atexit
 
 print("generative component loaded")
 
-#import pc_retrieval_component as pc_corpus
-
 class_history = pd.read_csv('data/classified_user_history.csv')
 
 import threading
@@ -32,9 +30,6 @@ def exit_handler():
     class_history.to_csv('data/classified_user_history.csv', index=False)
     retrieval.user_history.to_csv('data/user_history.csv', index=False)
     #likes.like_memory.to_csv('data/sentiment_memory.csv', index=False)
-    
-    #generated_kb.to_csv(r'data/generated_answers_kb.csv', index = False)
-    #like_memory.to_csv(r'data/sentiment_memory.csv', index = False)
 
 atexit.register(exit_handler)
 
@@ -55,8 +50,6 @@ def get_reply(input_sentence, user_id, only_generated=False):
         start = timer()
         
         #---------
-        #(TODO), store msg_hist and hist embedding in a csv with user_id as key
-        #Not vital, as class_history keeps history and hist embedding can be remade from past msgs.
         qa_history_embedding = None
 
         past_answer = None
@@ -95,7 +88,7 @@ def get_reply(input_sentence, user_id, only_generated=False):
                     user_msg_history = curr_user.message_history.iloc[0]        
             else:
                 retrieval.user_history = retrieval.user_history.append({'userID' : user_id , 'message_history' : [], 'true_sentiment' : [] } , ignore_index=True)
-                print("Added ", user_id, "to user history")
+                #print("Added ", user_id, "to user history")
                 curr_user = retrieval.user_history.loc[retrieval.user_history['userID'] == user_id]
         finally:
             dataframe_lock.release()
@@ -115,7 +108,6 @@ def get_reply(input_sentence, user_id, only_generated=False):
             #here we ideally should use locks inside of likes component but 
             #we assume that the calls to likes component is fast anyway < 0.15 sec
             #therefore concurrent calls wont suffer (with low number of concurrent users) 
-            #start_likes = timer()
             dataframe_lock.acquire()
             try:
                 #Getting answer from likes component
@@ -132,12 +124,10 @@ def get_reply(input_sentence, user_id, only_generated=False):
                         answer = None
             finally:
                 dataframe_lock.release()
-            #end_likes = timer()
-            #print("Likes component took:", end_likes-start_likes)
             #----------------------------------------------------------------        
             #Getting answer from retrieval component 
             answer2, sim_val_2, answer_id_2, max_sim_q_2 = retrieval.find_question_n_answer_retrieval(input_sentence)
-            print(sim_val_2, max_sim_val) 
+            #print(sim_val_2, max_sim_val) 
             #if both likes and retrieval component are below threshold in similarity score, use generative model
             if (sim_val_2 < retrieval_threshold) and (max_sim_val < likes_threshold):
                 using_generated = True
@@ -181,7 +171,6 @@ def get_reply(input_sentence, user_id, only_generated=False):
         else: #If called to only use generative model (testing/model selection purposes)
            using_generated = True  
             
-        #Runs once, for the first sentence.
         if type(qa_history_embedding) is not np.ndarray:
             with gen.cmn.g.as_default():
                 qa_history_embedding = gen.cmn.sim_sess.run(gen.cmn.embedded_text, feed_dict={gen.cmn.text_input: [input_sentence]})
@@ -189,7 +178,7 @@ def get_reply(input_sentence, user_id, only_generated=False):
         #process input to generative model
         question_string ="<|startoftext|>"+input_sentence
 
-        #adding question mark if sentence doesn't have it
+        #adding question mark if sentence doesn't have it (trained model expects question mark)
         tokens = word_tokenize(input_sentence)
         if nltk.tag.pos_tag([tokens[-1]])[0][1] != '.':
             question_string = question_string + "?"
@@ -243,7 +232,7 @@ def get_reply(input_sentence, user_id, only_generated=False):
                 qa_history_embedding = gen.update_history_embedding(qa_history_embedding, past_msg_df.question, alpha=0.2)
                 qa_history_embedding = gen.update_history_embedding(qa_history_embedding, past_msg_df.answer, alpha=0.2)
                 
-            print("Past answer:", past_answer)
+            #print("Past answer:", past_answer)
             hist += "<|endofhistory|>"
                 
             gen_input = hist + question_string
@@ -256,16 +245,13 @@ def get_reply(input_sentence, user_id, only_generated=False):
         
         if using_generated: 
             start_gen = timer()
-            print(gen_input)
+            #print(gen_input)
             #Generate answers
             generated_answers = gen.generate_reply(gen_input)
             mid_gen = timer()
             #remove bad answers (empty or too similar to past answer)
             generated_answers = gen.bad_answer_removal(generated_answers, past_answer)
             
-            #Get answers from pc (could be done in another thread before generate_reply for time save)
-            #pc_answers = pc_corpus.retrieve_similar_message(input_sentence)
-
             #rank answers
             output_sentence = gen.answer_ranking(qa_history_embedding, generated_answers, input_sentence)
 
@@ -273,7 +259,7 @@ def get_reply(input_sentence, user_id, only_generated=False):
 
             answer = output_sentence
             end_gen = timer()
-            print("Generated time:", end_gen-start_gen, mid_gen-start_gen)
+            #print("Generated time:", end_gen-start_gen, mid_gen-start_gen)
         else:
             print(answer, '\n')
             
@@ -288,17 +274,13 @@ def get_reply(input_sentence, user_id, only_generated=False):
             dataframe_lock.release()
         
         end = timer()
-        print("Total:", end - start)
+        #print("Total:", end - start)
         
     except Exception as e:
         print(e)
         error_msg = str(e)
     finally:
-        #if using_generated and answer != None:
-            #answer = answer + " <GN>"
         return {"error" : error_msg, "answer" : answer, "component" : component}
-    #except Exception as e:
-        #print(e, "Error: Encountered unknown word.")
 
 def get_self_disclosure(input_sentence, user_id, question_topic):
     global class_history
@@ -368,7 +350,7 @@ def get_disclose_and_reflect(past_user_utterance, user_id, new_topic):
 #Need to ensure that questions are not too similar as what have been asked before
 #Should rank questions based on topic relevancy
 
-#Currently just test of concept not actually implemented        
+#Currently below is just a test of concept, not actually implemented        
 def get_question(input_sentence, user_id):
     try:
         global class_history
@@ -400,7 +382,7 @@ def get_question(input_sentence, user_id):
                     user_msg_history = curr_user.message_history.iloc[0]        
             else:
                 retrieval.user_history = retrieval.user_history.append({'userID' : user_id , 'message_history' : [], 'true_sentiment' : [] } , ignore_index=True)
-                print("Added ", user_id, "to user history")
+                #print("Added ", user_id, "to user history")
                 curr_user = retrieval.user_history.loc[retrieval.user_history['userID'] == user_id]
         finally:
             dataframe_lock.release()
@@ -460,14 +442,14 @@ def get_question(input_sentence, user_id):
                 temp_count +=1
 
             
-        print("Past answer:", past_answer)
+        #print("Past answer:", past_answer)
         hist += "<|endofhistory|>"
             
         gen_input = hist + question_string
 
         qa_history_embedding = gen.update_history_embedding(qa_history_embedding, input_sentence, alpha=0.2)
 
-        print(gen_input)
+        #print(gen_input)
         
         #Generate answers
         generated_answers = gen.generate_reply(gen_input)

@@ -26,3 +26,36 @@ the script "gpt2_specific_gen.py" to generate.
 The script is an adapted variation of "interactive_conditional_samples.py" from openAI and the "gpt_2.py" script from the gpt_2_simple library.
 
 
+# Setup
+git clone https://github.com/lcebear/memoryDialogueBot.git
+
+Create a virtual python environment
+
+python3 venv path/to/env
+
+Install requirements
+
+pip install -r requirements.txt
+
+Download additional packages
+
+python -m spacy download en_core_web_lg
+
+download nltk packages nltk.download()
+stopwords 
+punkt
+vader_lexicon
+averaged_perceptron_tagger
+
+download latest GPT-2 generative model to root
+
+download trained classifiers to root
+
+## Run Chatbot
+python3 -m run_agent.py 
+
+## Run API
+set FLASK_APP=agent_api
+flask run
+
+-> Example API usage in json_post_example.py
