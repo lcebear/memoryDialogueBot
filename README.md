@@ -55,3 +55,6 @@ set FLASK_APP=agent_api
 flask run
 ```
 -> Example API usage in json_post_example.py
+
+# Cite
+TBD - Master Thesis still on-going (report)
