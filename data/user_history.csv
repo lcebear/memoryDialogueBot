@@ -1,2 +1,3 @@
 message_history,true_sentiment,userID
 "[('what is your name?', 'My Name is Sean.', 44), ('how old are you?', 'I just turned 30.', 137)]",[],staticUser
+"[('What is your name?', 'My name is Abigail.', 44), ('how old are you', ""I'm 20."", 137)]",[],randomUser

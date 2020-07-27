@@ -46,6 +46,10 @@ history_less_labels = [11, 18, 20, 22, 24, 27, 29, 30, 33, 34, 36, 70, 100]
 
 def get_reply(input_sentence, user_id, only_generated=False):
     try:
+        #Always provide user_id.
+        if user_id == None:
+            user_id = "none"
+            
         global class_history
         start = timer()
         

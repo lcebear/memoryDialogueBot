@@ -5,7 +5,20 @@ alabel,answer,desc,qlabel,question,userID,response
 34,My Name is Sean.,What's your name?,15,what is your name?,staticUser,0.07457200000000341
 35,I like spring roll.,Food/Drink,12,what food do you like?,staticUser,0.06841320000000195
 26,I'm vegan so I usually get a dessert.,Food/Drink,12,what does it taste like?,staticUser,1.32265799999999
-26,I'm having a strawberry ice cream with frosting.,Food/Drink,12,what dessert?,staticUser,1.311030400000007
+26,I'm having a strawberry ice cream with frosting.,Food/Drink,12,what dessert?,staticUser,1.3110304000000073
 26,Strawberry ice cream is really good and cold (you can feel cold at the plant).,Food/Drink,12,what does spring roll taste like?,staticUser,1.417513200000002
 26,I think spring rolls are basically peanut butter ice cream.,Food/Drink,12,but what does spring roll taste like?,staticUser,1.5192512999999934
 22,that's interesting.,Really?/surprised reaction,18,really?,staticUser,1.1448058999999944
+4,Any life that can be meaningfully lived because we can live it without being living all of the time.,hobbies/interests,0,what is the meaning of life?,randomUser,2.319959899999958
+3,"Yes, ever seen the ocean.",Traveling,19,have you ever seen the ocean?,randomUser,1.3818751999999677
+34,My name is Abigail.,What's your name?,15,What is your name?,randomUser,0.13094090000004144
+26,"Yes, I had sushi before.",Food/Drink,12,have you eaten sushi before?,randomUser,1.3023762000000259
+3,It was horrible.,Traveling,19,what was it like?,randomUser,1.4771658999998183
+3,"When the beach is blue, my boyfriend and I don't get along, so it was weird.",Follow up question type,19,Why?,randomUser,1.5454631999998585
+3,"Yes, I saw how beautiful the beach was.",Follow up question type,19,The beach was blue?,randomUser,1.5286960999999335
+29,hey there,Hi / Hello,29,hi,randomUser,0.3002359000000041
+31,I'm 20.,How long...?,10,how old are you,randomUser,0.18860130000000197
+37,I work full time.,Follow up question type,10,what do you do,randomUser,1.1870176000000043
+2,I am in New York.,Follow up question type,10,where?,randomUser,1.3932065000000051
+19,I'm a software engineer.,Job,4,what do you work as?,randomUser,1.2655070999999936
+20,Very enjoyable.,Follow up question type,4,do you enjoy it?,randomUser,1.2061171999999942
