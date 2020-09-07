@@ -11,3 +11,4 @@ nltk==3.5
 protobuf==3.12.2
 scikit_learn==0.23.1
 tensorflow==1.15.2
+waitress==1.4.4

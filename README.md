@@ -2,11 +2,10 @@
 Master Thesis Project
 
 
-19/07/2020 - Question answering agent version 2.0. 
+07/09/2020 - Question answering agent version 2.0. 
 
-The project (API) is developed to be run using the flask library.
-Use the following command to set the flask app 'set FLASK_APP = agent_api'.
-Then the application can be ran with the following command 'flask run'
+The project (API) is developed to be run using the flask and waitress library.
+The application can be ran with the following command 'python3 waitress_server.py'
 The file 'json_post_example.py' illustrates how the agent can be called through the api.
 There is also an interactive version of the agent in file 'run_agent.py'.
 
@@ -40,6 +39,9 @@ download nltk packages 'stopwords', 'punkt', 'vader_lexicon', 'averaged_perceptr
 ```python
 import nltk
 nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('vader_lexicon')
+nltk.download(averaged_perceptron_tagger')
 ...
 ```
 [Download](https://drive.google.com/open?id=1bamDAUSHM8ye6xzs51-hi9un03DwjOy5) latest GPT-2 generative model to project folder.
@@ -52,10 +54,11 @@ python3 -m run_agent.py
 ```
 ## Run API
 ```
-set FLASK_APP=agent_api
-flask run
+python3 waitress_server.py
 ```
 -> Example API usage in json_post_example.py
+
+Remember to change the secret key (app.secret_key) in the 'agent_api' file to some random bytes.
 
 # Cite
 TBD - Master Thesis still on-going (report)

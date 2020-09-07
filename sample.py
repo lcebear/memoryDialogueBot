@@ -23,7 +23,7 @@ def top_k_logits(logits, k):
 
 
 def top_p_logits(logits, p):
-    with tf.variable_scope('top_p_logits'):
+    with tf.compat.v1.variable_scope('top_p_logits'):
         logits_sort = tf.sort(logits, direction='DESCENDING')
         probs_sort = tf.nn.softmax(logits_sort)
         probs_sums = tf.cumsum(probs_sort, axis=1, exclusive=True)
@@ -44,7 +44,7 @@ def sample_sequence(*, hparams, length, start_token=None, batch_size=None, conte
         context = tf.fill([batch_size, 1], start_token)
 
     def step(hparams, tokens, past=None):
-        lm_output = model.model(hparams=hparams, X=tokens, past=past, reuse=tf.AUTO_REUSE)
+        lm_output = model.model(hparams=hparams, X=tokens, past=past, reuse=tf.compat.v1.AUTO_REUSE)
 
         logits = lm_output['logits'][:, :, :hparams.n_vocab]
         presents = lm_output['present']

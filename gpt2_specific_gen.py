@@ -60,7 +60,7 @@ with graph.as_default():
     #setting context (set_context didn't work)
     context = tf.compat.v1.placeholder(tf.int32, [batch_size, None])
     np.random.seed(seed)
-    tf.set_random_seed(seed)
+    tf.compat.v1.set_random_seed(seed)
     output = sample.sample_sequence(
         hparams=hparams, length=length,
         context=context,
