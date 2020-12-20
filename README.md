@@ -61,4 +61,9 @@ python3 waitress_server.py
 Remember to change the secret key (app.secret_key) in the 'agent_api' file to some random bytes.
 
 # Cite
-TBD - Master Thesis still on-going (report)
+## Master's Thesis
+Conversational Chatbots with Memory-based Question and Answer Generation:
+http://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-171927
+
+## BibTex
+@mastersthesis{lundellvinkler2020conversational, title={Conversational Chatbots with Memory-based Question and Answer Generation}, author={Lundell Vinkler, Mikael and Yu, Peilin}, year={2020}, school={Link\={o}ping University } }
